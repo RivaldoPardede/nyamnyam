@@ -1,1 +1,2 @@
-// Placeholder - Providers will be implemented in Task 3
+// Provider exports
+export 'restaurant_list_provider.dart';

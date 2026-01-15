@@ -1,1 +1,2 @@
-// Placeholder - Pages will be implemented in Task 3 & 4
+// UI Pages exports
+export 'restaurant_list_page.dart';

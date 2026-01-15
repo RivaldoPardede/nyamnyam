@@ -1,1 +1,2 @@
-// Placeholder - Widgets will be implemented in Task 3 & 4
+// UI Widgets exports
+export 'restaurant_card.dart';
