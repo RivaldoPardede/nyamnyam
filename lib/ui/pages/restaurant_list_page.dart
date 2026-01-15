@@ -4,6 +4,7 @@ import '../../data/models/restaurant.dart';
 import '../../providers/restaurant_list_provider.dart';
 import '../../utils/result_state.dart';
 import '../widgets/restaurant_card.dart';
+import 'restaurant_detail_page.dart';
 
 /// Page displaying list of restaurants
 class RestaurantListPage extends StatefulWidget {
@@ -103,11 +104,13 @@ class _RestaurantListPageState extends State<RestaurantListPage> {
           return RestaurantCard(
             restaurant: restaurant,
             onTap: () {
-              // TODO: Navigate to detail page
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Navigate to ${restaurant.name}'),
-                  duration: const Duration(seconds: 1),
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => RestaurantDetailPage(
+                    restaurantId: restaurant.id,
+                    restaurantName: restaurant.name,
+                  ),
                 ),
               );
             },

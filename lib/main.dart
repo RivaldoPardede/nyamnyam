@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'providers/restaurant_list_provider.dart';
+import 'providers/restaurant_detail_provider.dart';
 import 'ui/pages/restaurant_list_page.dart';
 import 'utils/theme.dart';
 
@@ -17,6 +18,9 @@ class NyamNyamApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(
           create: (_) => RestaurantListProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => RestaurantDetailProvider(),
         ),
       ],
       child: MaterialApp(
