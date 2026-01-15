@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../data/models/restaurant.dart';
 import '../../providers/restaurant_list_provider.dart';
+import '../../providers/theme_provider.dart';
 import '../../utils/result_state.dart';
 import '../widgets/restaurant_card.dart';
 import 'restaurant_detail_page.dart';
@@ -41,6 +42,16 @@ class _RestaurantListPageState extends State<RestaurantListPage> {
               );
             },
             tooltip: 'Search',
+          ),
+          Consumer<ThemeProvider>(
+            builder: (context, themeProvider, _) {
+              final isDark = themeProvider.isDarkMode(context);
+              return IconButton(
+                icon: Icon(isDark ? Icons.light_mode : Icons.dark_mode),
+                onPressed: () => themeProvider.toggleTheme(),
+                tooltip: isDark ? 'Light Mode' : 'Dark Mode',
+              );
+            },
           ),
           IconButton(
             icon: const Icon(Icons.refresh),
