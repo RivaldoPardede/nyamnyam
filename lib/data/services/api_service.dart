@@ -72,6 +72,39 @@ class ApiService {
     }
   }
 
+  /// Add a review to a restaurant
+  Future<List<CustomerReview>> addReview({
+    required String restaurantId,
+    required String name,
+    required String review,
+  }) async {
+    final response = await _client.post(
+      Uri.parse('$_baseUrl/review'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'id': restaurantId,
+        'name': name,
+        'review': review,
+      }),
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      final data = jsonDecode(response.body) as Map<String, dynamic>;
+
+      if (data['error'] == true) {
+        throw Exception(data['message'] ?? 'Failed to add review');
+      }
+
+      final reviews = (data['customerReviews'] as List<dynamic>)
+          .map((r) => CustomerReview.fromJson(r as Map<String, dynamic>))
+          .toList();
+
+      return reviews;
+    } else {
+      throw Exception('Failed to add review: ${response.statusCode}');
+    }
+  }
+
   /// Dispose the client when done
   void dispose() {
     _client.close();

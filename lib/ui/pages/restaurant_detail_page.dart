@@ -20,6 +20,10 @@ class RestaurantDetailPage extends StatefulWidget {
 }
 
 class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _reviewController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   @override
   void initState() {
     super.initState();
@@ -29,6 +33,13 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
             widget.restaurantId,
           );
     });
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _reviewController.dispose();
+    super.dispose();
   }
 
   @override
@@ -159,17 +170,29 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                 ),
                 const SizedBox(height: 24),
 
-                // Customer Reviews
-                if (restaurant.customerReviews.isNotEmpty) ...[
+                // Customer Reviews Section
+                Text(
+                  'Reviews',
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                
+                // Add Review Form
+                _buildAddReviewForm(restaurant.id),
+                const SizedBox(height: 16),
+
+                // Reviews List
+                if (restaurant.customerReviews.isNotEmpty)
+                  ...restaurant.customerReviews.map(_buildReviewCard)
+                else
                   Text(
-                    'Reviews',
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
+                    'No reviews yet. Be the first to review!',
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
                     ),
                   ),
-                  const SizedBox(height: 12),
-                  ...restaurant.customerReviews.map(_buildReviewCard),
-                ],
 
                 // Bottom padding for safe area
                 const SizedBox(height: 32),
@@ -410,5 +433,130 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
         ),
       ],
     );
+  }
+
+  Widget _buildAddReviewForm(String restaurantId) {
+    final theme = Theme.of(context);
+
+    return Consumer<RestaurantDetailProvider>(
+      builder: (context, provider, _) {
+        return Card(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Add Your Review',
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+
+                  // Name Field
+                  TextFormField(
+                    controller: _nameController,
+                    decoration: const InputDecoration(
+                      labelText: 'Your Name',
+                      hintText: 'Enter your name',
+                      prefixIcon: Icon(Icons.person),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return 'Please enter your name';
+                      }
+                      return null;
+                    },
+                    enabled: !provider.isSubmittingReview,
+                  ),
+                  const SizedBox(height: 12),
+
+                  // Review Field
+                  TextFormField(
+                    controller: _reviewController,
+                    decoration: const InputDecoration(
+                      labelText: 'Your Review',
+                      hintText: 'Share your experience...',
+                      prefixIcon: Icon(Icons.rate_review),
+                      alignLabelWithHint: true,
+                    ),
+                    maxLines: 3,
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return 'Please enter your review';
+                      }
+                      return null;
+                    },
+                    enabled: !provider.isSubmittingReview,
+                  ),
+                  const SizedBox(height: 12),
+
+                  // Error Message
+                  if (provider.reviewError != null)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: Text(
+                        'Failed to submit review. Please try again.',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.error,
+                        ),
+                      ),
+                    ),
+
+                  // Submit Button
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed: provider.isSubmittingReview
+                          ? null
+                          : () => _submitReview(restaurantId),
+                      icon: provider.isSubmittingReview
+                          ? const SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
+                            )
+                          : const Icon(Icons.send),
+                      label: Text(
+                        provider.isSubmittingReview
+                            ? 'Submitting...'
+                            : 'Submit Review',
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _submitReview(String restaurantId) async {
+    if (!_formKey.currentState!.validate()) return;
+
+    final success = await context.read<RestaurantDetailProvider>().addReview(
+          restaurantId: restaurantId,
+          name: _nameController.text.trim(),
+          review: _reviewController.text.trim(),
+        );
+
+    if (success && mounted) {
+      _nameController.clear();
+      _reviewController.clear();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Review submitted successfully!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    }
   }
 }
