@@ -5,6 +5,7 @@ import '../../providers/restaurant_list_provider.dart';
 import '../../utils/result_state.dart';
 import '../widgets/restaurant_card.dart';
 import 'restaurant_detail_page.dart';
+import 'search_page.dart';
 
 /// Page displaying list of restaurants
 class RestaurantListPage extends StatefulWidget {
@@ -31,6 +32,16 @@ class _RestaurantListPageState extends State<RestaurantListPage> {
       appBar: AppBar(
         title: const Text('NyamNyam'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.search),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SearchPage()),
+              );
+            },
+            tooltip: 'Search',
+          ),
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () {
