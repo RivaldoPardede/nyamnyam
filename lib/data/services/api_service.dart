@@ -6,7 +6,7 @@ import '../models/restaurant_detail.dart';
 
 /// API Service for Dicoding Restaurant API
 class ApiService {
-  static const String _baseUrl = 'https://restaurant-api.dicoding.dev';
+  static const _baseUrl = 'https://restaurant-api.dicoding.dev';
 
   final http.Client _client;
 

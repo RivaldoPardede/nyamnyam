@@ -32,7 +32,7 @@ void main() {
     await tester.pumpAndSettle();
 
     // Verify Favorites Page
-    expect(find.text('My Favorites'), findsOneWidget);
+    expect(find.text('Favorites'), findsOneWidget);
 
     // Navigate back to Home
     await tester.tap(find.byIcon(Icons.home_outlined));

@@ -91,34 +91,15 @@ class _RestaurantListPageState extends State<RestaurantListPage> {
                       scrollDirection: Axis.horizontal,
                       child: Row(
                         children: [
-                          _buildCategoryChip('All', Icons.fastfood, true),
-                          _buildCategoryChip('Nearby', Icons.location_on, false),
-                          _buildCategoryChip('Top Rated', Icons.star, false),
-                          _buildCategoryChip('New', Icons.new_releases, false),
+                          _buildCategoryChip(theme, 'All', Icons.fastfood, true),
+                          _buildCategoryChip(theme, 'Nearby', Icons.location_on, false),
+                          _buildCategoryChip(theme, 'Top Rated', Icons.star, false),
+                          _buildCategoryChip(theme, 'New', Icons.new_releases, false),
                         ],
                       ),
                     ),
                   ],
                 ),
-              ),
-            ),
-
-            // Restaurant List
-            Consumer<RestaurantListProvider>(
-              builder: (context, provider, _) {
-                return switch (provider.state) {
-                  ResultStateNone() => const SliverFillRemaining(
-                    child: Center(child: Text('Press refresh')),
-                  ),
-                  ResultStateLoading() => const SliverFillRemaining(
-                    child: Center(child: CircularProgressIndicator()),
-                  ),
-                  ResultStateSuccess<List<Restaurant>>(:final data) =>
-                    _buildSliverList(data),
-                  ResultStateError(:final message) => SliverFillRemaining(
-                    child: _buildErrorState(message),
-                  ),
-                };
               ),
             ),
 

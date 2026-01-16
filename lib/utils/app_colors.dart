@@ -26,7 +26,9 @@ class AppColors {
   static const Color darkSurfaceVariant = Color(0xFF2D312F);
   static const Color darkTextPrimary = Color(0xFFE1E3DF);
   static const Color darkTextSecondary = Color(0xFFC4C7C5);
-  static const Color darkPrimary = Color(0xFF4DE2BE); // Lighter teal for dark mode
+  static const Color darkPrimary = Color(
+    0xFF4DE2BE,
+  ); // Lighter teal for dark mode
 
   // Status colors
   static const Color success = Color(0xFF388E3C);

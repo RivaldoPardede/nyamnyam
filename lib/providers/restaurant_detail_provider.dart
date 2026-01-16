@@ -33,9 +33,9 @@ class RestaurantDetailProvider extends ChangeNotifier {
       _state = ResultStateSuccess(detail);
     } catch (e) {
       _state = ResultStateError(e.toString());
+    } finally {
+      notifyListeners();
     }
-
-    notifyListeners();
   }
 
   /// Add a review to the restaurant
