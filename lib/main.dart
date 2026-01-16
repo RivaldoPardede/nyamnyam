@@ -22,7 +22,13 @@ class NyamNyamApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => RestaurantListProvider()),
         ChangeNotifierProvider(create: (_) => RestaurantDetailProvider()),
         ChangeNotifierProvider(create: (_) => RestaurantSearchProvider()),
-        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider(
+          create: (_) {
+            final provider = ThemeProvider();
+            provider.loadTheme(); // Load saved theme on startup
+            return provider;
+          },
+        ),
         ChangeNotifierProvider(create: (_) => FavoriteProvider()),
       ],
       child: Consumer<ThemeProvider>(
