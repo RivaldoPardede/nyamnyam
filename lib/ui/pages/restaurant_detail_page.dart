@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../data/models/restaurant.dart';
+import '../../data/models/customer_review.dart';
+import '../../data/models/menu_item.dart';
+import '../../data/models/restaurant_detail.dart';
 import '../../providers/restaurant_detail_provider.dart';
 import '../../utils/result_state.dart';
 

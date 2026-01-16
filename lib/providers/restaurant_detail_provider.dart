@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../data/data.dart';
+import '../data/models/restaurant_detail.dart';
+import '../data/services/api_service.dart';
 import '../utils/result_state.dart';
 
 /// Provider for managing restaurant detail state

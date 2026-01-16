@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import '../models/customer_review.dart';
 import '../models/restaurant.dart';
+import '../models/restaurant_detail.dart';
 
 /// API Service for Dicoding Restaurant API
 class ApiService {

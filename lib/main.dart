@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'providers/restaurant_list_provider.dart';
 import 'providers/restaurant_detail_provider.dart';
+import 'providers/restaurant_list_provider.dart';
 import 'providers/restaurant_search_provider.dart';
 import 'providers/theme_provider.dart';
 import 'ui/pages/restaurant_list_page.dart';
-import 'utils/theme.dart';
+import 'utils/app_theme.dart';
 
 void main() {
   runApp(const NyamNyamApp());
