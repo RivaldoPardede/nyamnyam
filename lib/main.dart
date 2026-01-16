@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'providers/favorite_provider.dart';
 import 'providers/restaurant_detail_provider.dart';
 import 'providers/restaurant_list_provider.dart';
 import 'providers/restaurant_search_provider.dart';
 import 'providers/theme_provider.dart';
-import 'ui/pages/restaurant_list_page.dart';
+import 'utils/app_router.dart';
 import 'utils/app_theme.dart';
 
 void main() {
@@ -22,16 +23,17 @@ class NyamNyamApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => RestaurantDetailProvider()),
         ChangeNotifierProvider(create: (_) => RestaurantSearchProvider()),
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider(create: (_) => FavoriteProvider()),
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, _) {
-          return MaterialApp(
+          return MaterialApp.router(
             title: 'NyamNyam',
             debugShowCheckedModeBanner: false,
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,
             themeMode: themeProvider.themeMode,
-            home: const RestaurantListPage(),
+            routerConfig: AppRouter.router,
           );
         },
       ),

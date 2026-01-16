@@ -4,7 +4,7 @@ import 'package:nyamnyam/main.dart';
 
 void main() {
   testWidgets(
-    'App should render restaurant list page with search and refresh',
+    'App should render restaurant list page with navigation buttons',
     (WidgetTester tester) async {
       await tester.pumpWidget(const NyamNyamApp());
 
@@ -14,8 +14,11 @@ void main() {
       // Verify search button exists
       expect(find.byIcon(Icons.search), findsOneWidget);
 
-      // Verify refresh button exists
-      expect(find.byIcon(Icons.refresh), findsOneWidget);
+      // Verify favorites button exists
+      expect(find.byIcon(Icons.favorite_border), findsOneWidget);
+
+      // Verify settings button exists
+      expect(find.byIcon(Icons.settings), findsOneWidget);
     },
   );
 }

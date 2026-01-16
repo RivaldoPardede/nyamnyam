@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../data/models/restaurant.dart';
 import '../../providers/restaurant_search_provider.dart';
 import '../../utils/result_state.dart';
 import '../widgets/restaurant_card.dart';
-import 'restaurant_detail_page.dart';
 
 /// Page for searching restaurants
 class SearchPage extends StatefulWidget {
@@ -181,17 +181,9 @@ class _SearchPageState extends State<SearchPage> {
         final restaurant = restaurants[index];
         return RestaurantCard(
           restaurant: restaurant,
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => RestaurantDetailPage(
-                  restaurantId: restaurant.id,
-                  restaurantName: restaurant.name,
-                ),
-              ),
-            );
-          },
+          onTap: () => context.push(
+            '/detail/${restaurant.id}?name=${Uri.encodeComponent(restaurant.name)}',
+          ),
         );
       },
     );

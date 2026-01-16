@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../data/models/restaurant.dart';
 import '../../providers/restaurant_list_provider.dart';
 import '../../providers/theme_provider.dart';
 import '../../utils/result_state.dart';
 import '../widgets/restaurant_card.dart';
-import 'restaurant_detail_page.dart';
-import 'search_page.dart';
 
 /// Page displaying list of restaurants
 class RestaurantListPage extends StatefulWidget {
@@ -35,12 +34,7 @@ class _RestaurantListPageState extends State<RestaurantListPage> {
         actions: [
           IconButton(
             icon: const Icon(Icons.search),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const SearchPage()),
-              );
-            },
+            onPressed: () => context.push('/search'),
             tooltip: 'Search',
           ),
           Consumer<ThemeProvider>(
@@ -54,11 +48,14 @@ class _RestaurantListPageState extends State<RestaurantListPage> {
             },
           ),
           IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: () {
-              context.read<RestaurantListProvider>().fetchRestaurants();
-            },
-            tooltip: 'Refresh',
+            icon: const Icon(Icons.favorite_border),
+            onPressed: () => context.push('/favorites'),
+            tooltip: 'Favorites',
+          ),
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () => context.push('/settings'),
+            tooltip: 'Settings',
           ),
         ],
       ),
@@ -124,17 +121,9 @@ class _RestaurantListPageState extends State<RestaurantListPage> {
           final restaurant = restaurants[index];
           return RestaurantCard(
             restaurant: restaurant,
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => RestaurantDetailPage(
-                    restaurantId: restaurant.id,
-                    restaurantName: restaurant.name,
-                  ),
-                ),
-              );
-            },
+            onTap: () => context.push(
+              '/detail/${restaurant.id}?name=${Uri.encodeComponent(restaurant.name)}',
+            ),
           );
         },
       ),
