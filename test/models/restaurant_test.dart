@@ -36,16 +36,8 @@ void main() {
       );
 
       expect(
-        restaurant.smallPictureUrl,
-        'https://restaurant-api.dicoding.dev/images/small/test-pic-id',
-      );
-      expect(
         restaurant.pictureUrl,
         'https://restaurant-api.dicoding.dev/images/medium/test-pic-id',
-      );
-      expect(
-        restaurant.largePictureUrl,
-        'https://restaurant-api.dicoding.dev/images/large/test-pic-id',
       );
     });
 

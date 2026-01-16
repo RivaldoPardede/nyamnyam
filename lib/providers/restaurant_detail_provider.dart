@@ -12,16 +12,12 @@ class RestaurantDetailProvider extends ChangeNotifier {
 
   ResultState<RestaurantDetail> _state = const ResultStateNone();
   bool _isSubmittingReview = false;
-  String? _reviewError;
 
   /// Current state of restaurant detail
   ResultState<RestaurantDetail> get state => _state;
 
   /// Whether a review is being submitted
   bool get isSubmittingReview => _isSubmittingReview;
-
-  /// Error message when review submission fails
-  String? get reviewError => _reviewError;
 
   /// Fetch restaurant detail by ID
   Future<void> fetchRestaurantDetail(String id) async {
@@ -45,7 +41,6 @@ class RestaurantDetailProvider extends ChangeNotifier {
     required String review,
   }) async {
     _isSubmittingReview = true;
-    _reviewError = null;
     notifyListeners();
 
     try {
@@ -78,24 +73,9 @@ class RestaurantDetailProvider extends ChangeNotifier {
       notifyListeners();
       return true;
     } catch (e) {
-      _reviewError = e.toString();
       _isSubmittingReview = false;
       notifyListeners();
       return false;
     }
-  }
-
-  /// Clear review error
-  void clearReviewError() {
-    _reviewError = null;
-    notifyListeners();
-  }
-
-  /// Reset state to none (useful when navigating back)
-  void reset() {
-    _state = const ResultStateNone();
-    _isSubmittingReview = false;
-    _reviewError = null;
-    notifyListeners();
   }
 }

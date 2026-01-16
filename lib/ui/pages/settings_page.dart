@@ -22,7 +22,7 @@ class SettingsPage extends StatelessWidget {
             theme,
             children: [
               Consumer<ThemeProvider>(
-                builder: (context, themeProvider, _) {
+                builder: (_, themeProvider, child) {
                   return Column(
                     children: [
                       ListTile(
@@ -81,7 +81,7 @@ class SettingsPage extends StatelessWidget {
             theme,
             children: [
               Consumer<ReminderProvider>(
-                builder: (context, reminderProvider, _) {
+                builder: (_, reminderProvider, child) {
                   return SwitchListTile(
                     secondary: _buildIcon(
                       Icons.notifications_active_rounded,

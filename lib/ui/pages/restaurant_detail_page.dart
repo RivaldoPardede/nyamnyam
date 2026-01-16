@@ -49,7 +49,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Consumer<RestaurantDetailProvider>(
-        builder: (context, provider, _) {
+        builder: (_, provider, child) {
           return switch (provider.state) {
             ResultStateNone() => _buildLoadingState(),
             ResultStateLoading() => _buildLoadingState(),
@@ -207,7 +207,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: restaurant.customerReviews.length,
-                  separatorBuilder: (_, _) => const SizedBox(height: 12),
+                  separatorBuilder: (_, index) => const SizedBox(height: 12),
                   itemBuilder: (context, index) => _buildReviewTile(
                     theme,
                     restaurant.customerReviews[index],
@@ -245,7 +245,8 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
               child: Image.network(
                 restaurant.largePictureUrl,
                 fit: BoxFit.cover,
-                errorBuilder: (_, _, _) => Container(color: Colors.grey),
+                errorBuilder: (_, error, stack) =>
+                    Container(color: Colors.grey),
               ),
             ),
             // Gradient Overlay for text readability (scrim)
@@ -272,7 +273,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
 
   Widget _buildFloatingFavoriteButton() {
     return Consumer<RestaurantDetailProvider>(
-      builder: (consumerContext, provider, _) {
+      builder: (_, provider, child) {
         final data = provider.state is ResultStateSuccess<RestaurantDetail>
             ? (provider.state as ResultStateSuccess<RestaurantDetail>).data
             : null;
@@ -282,7 +283,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
         // Check favorite status
         return FutureBuilder<bool>(
           future: context.read<FavoriteProvider>().isFavorite(data.id),
-          builder: (context, snapshot) {
+          builder: (_, snapshot) {
             final isFavorite = snapshot.data ?? false;
             return FloatingActionButton.extended(
               onPressed: () async {
@@ -299,7 +300,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                     .toggleFavorite(restaurant);
 
                 if (mounted) {
-                  ScaffoldMessenger.of(this.context).showSnackBar(
+                  ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text(
                         newStatus
@@ -451,7 +452,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
 
   Widget _buildAddReviewForm() {
     return Consumer<RestaurantDetailProvider>(
-      builder: (context, provider, _) {
+      builder: (_, provider, child) {
         final isSubmitting = provider.isSubmittingReview;
 
         return Column(

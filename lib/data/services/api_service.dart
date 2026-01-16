@@ -105,9 +105,4 @@ class ApiService {
       throw Exception('Failed to add review: ${response.statusCode}');
     }
   }
-
-  /// Dispose the client when done
-  void dispose() {
-    _client.close();
-  }
 }

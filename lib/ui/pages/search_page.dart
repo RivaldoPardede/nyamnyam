@@ -78,7 +78,7 @@ class _SearchPageState extends State<SearchPage> {
           // Results
           Expanded(
             child: Consumer<RestaurantSearchProvider>(
-              builder: (context, provider, _) {
+              builder: (_, provider, child) {
                 return switch (provider.state) {
                   ResultStateNone() => _buildInitialState(theme),
                   ResultStateLoading() => const Center(

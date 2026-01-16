@@ -1,6 +1,4 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:timezone/timezone.dart' as tz;
-import 'package:timezone/data/latest.dart' as tz_data;
 
 /// Service for managing local notifications
 class NotificationService {
@@ -16,9 +14,6 @@ class NotificationService {
   /// Initialize notification service
   Future<void> init() async {
     if (_isInitialized) return;
-
-    // Initialize timezone
-    tz_data.initializeTimeZones();
 
     // Android settings
     const androidSettings = AndroidInitializationSettings(
@@ -55,82 +50,8 @@ class NotificationService {
     return true;
   }
 
-  /// Schedule daily notification at 11:00 AM
-  Future<void> scheduleDailyReminder({
-    required String title,
-    required String body,
-  }) async {
-    await init();
-
-    const androidDetails = AndroidNotificationDetails(
-      'daily_reminder',
-      'Daily Reminder',
-      channelDescription: 'Daily lunch reminder notifications',
-      importance: Importance.high,
-      priority: Priority.high,
-      icon: '@mipmap/ic_launcher',
-    );
-
-    const iosDetails = DarwinNotificationDetails(
-      presentAlert: true,
-      presentBadge: true,
-      presentSound: true,
-    );
-
-    const details = NotificationDetails(
-      android: androidDetails,
-      iOS: iosDetails,
-    );
-
-    // Schedule for 11:00 AM daily
-    final now = tz.TZDateTime.now(tz.local);
-    var scheduledTime = tz.TZDateTime(
-      tz.local,
-      now.year,
-      now.month,
-      now.day,
-      11, // 11 AM
-      0,
-    );
-
-    // If 11 AM has passed today, schedule for tomorrow
-    if (scheduledTime.isBefore(now)) {
-      scheduledTime = scheduledTime.add(const Duration(days: 1));
-    }
-
-    await _plugin.zonedSchedule(
-      0, // notification id
-      title,
-      body,
-      scheduledTime,
-      details,
-      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
-      matchDateTimeComponents: DateTimeComponents.time, // Repeat daily
-    );
-  }
-
   /// Cancel daily reminder
   Future<void> cancelDailyReminder() async {
     await _plugin.cancel(0);
-  }
-
-  /// Show immediate notification (for testing)
-  Future<void> showNotification({
-    required String title,
-    required String body,
-  }) async {
-    await init();
-
-    const androidDetails = AndroidNotificationDetails(
-      'instant',
-      'Instant Notifications',
-      channelDescription: 'Instant notification channel',
-      importance: Importance.high,
-      priority: Priority.high,
-    );
-
-    const details = NotificationDetails(android: androidDetails);
-
-    await _plugin.show(1, title, body, details);
   }
 }

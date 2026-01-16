@@ -9,7 +9,6 @@ class ReminderProvider extends ChangeNotifier {
   final NotificationService _notificationService;
 
   bool _isEnabled = false;
-  bool _isInitialized = false;
 
   ReminderProvider({
     PreferencesService? prefsService,
@@ -20,31 +19,13 @@ class ReminderProvider extends ChangeNotifier {
   /// Whether daily reminder is enabled
   bool get isEnabled => _isEnabled;
 
-  /// Whether provider is initialized
-  bool get isInitialized => _isInitialized;
-
   /// Initialize reminder state from preferences
   Future<void> loadReminder() async {
     _isEnabled = await _prefsService.getDailyReminderEnabled();
-    _isInitialized = true;
 
     // If enabled, ensure Workmanager task is registered
     if (_isEnabled) {
       await _scheduleReminder();
-    }
-
-    notifyListeners();
-  }
-
-  /// Toggle daily reminder
-  Future<void> toggleReminder() async {
-    _isEnabled = !_isEnabled;
-    await _prefsService.setDailyReminderEnabled(_isEnabled);
-
-    if (_isEnabled) {
-      await _scheduleReminder();
-    } else {
-      await _cancelReminder();
     }
 
     notifyListeners();

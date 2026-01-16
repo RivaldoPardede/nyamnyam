@@ -1,6 +1,6 @@
 import 'category.dart';
 import 'customer_review.dart';
-import 'menus.dart';
+import 'menu.dart';
 
 /// Restaurant detail model with full information
 class RestaurantDetail {
@@ -12,7 +12,7 @@ class RestaurantDetail {
   final String address;
   final double rating;
   final List<Category> categories;
-  final Menus menus;
+  final Menu menus;
   final List<CustomerReview> customerReviews;
 
   const RestaurantDetail({
@@ -27,10 +27,6 @@ class RestaurantDetail {
     required this.menus,
     required this.customerReviews,
   });
-
-  /// Get the full image URL from pictureId
-  String get pictureUrl =>
-      'https://restaurant-api.dicoding.dev/images/medium/$pictureId';
 
   /// Get large image URL for detail view
   String get largePictureUrl =>
@@ -48,7 +44,7 @@ class RestaurantDetail {
       categories: (json['categories'] as List<dynamic>)
           .map((c) => Category.fromJson(c as Map<String, dynamic>))
           .toList(),
-      menus: Menus.fromJson(json['menus'] as Map<String, dynamic>),
+      menus: Menu.fromJson(json['menus'] as Map<String, dynamic>),
       customerReviews: (json['customerReviews'] as List<dynamic>)
           .map((r) => CustomerReview.fromJson(r as Map<String, dynamic>))
           .toList(),

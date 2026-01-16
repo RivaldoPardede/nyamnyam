@@ -45,7 +45,7 @@ class NyamNyamApp extends StatelessWidget {
         ),
       ],
       child: Consumer<ThemeProvider>(
-        builder: (_, themeProvider, _) {
+        builder: (_, themeProvider, child) {
           return MaterialApp.router(
             title: 'NyamNyam',
             debugShowCheckedModeBanner: false,

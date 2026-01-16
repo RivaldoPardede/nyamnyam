@@ -29,7 +29,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
     return Scaffold(
       appBar: AppBar(title: const Text('Favorites'), centerTitle: true),
       body: Consumer<FavoriteProvider>(
-        builder: (context, provider, _) {
+        builder: (_, provider, child) {
           if (provider.isLoading) {
             return const Center(child: CircularProgressIndicator());
           }

@@ -20,14 +20,6 @@ class Restaurant {
   String get pictureUrl =>
       'https://restaurant-api.dicoding.dev/images/medium/$pictureId';
 
-  /// Get small image URL for thumbnails
-  String get smallPictureUrl =>
-      'https://restaurant-api.dicoding.dev/images/small/$pictureId';
-
-  /// Get large image URL for detail view
-  String get largePictureUrl =>
-      'https://restaurant-api.dicoding.dev/images/large/$pictureId';
-
   factory Restaurant.fromJson(Map<String, dynamic> json) {
     return Restaurant(
       id: json['id'] as String,
