@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../data/models/restaurant.dart';
+import '../../utils/app_colors.dart';
 
-/// Card widget for displaying restaurant in list view
+/// Modern Card widget for displaying restaurant
 class RestaurantCard extends StatelessWidget {
   final Restaurant restaurant;
   final VoidCallback? onTap;
@@ -20,146 +21,142 @@ class RestaurantCard extends StatelessWidget {
 
     return Card(
       clipBehavior: Clip.antiAlias,
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      elevation: 2,
+      shadowColor: Colors.black.withValues(alpha: 0.1),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: InkWell(
         onTap: onTap,
-        child: Row(
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Restaurant Image
-            Hero(
-              tag: 'restaurant-image-${restaurant.id}',
-              child: ClipRRect(
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(16),
-                  bottomLeft: Radius.circular(16),
-                ),
-                child: Image.network(
-                  restaurant.smallPictureUrl,
-                  width: 120,
-                  height: 120,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => Container(
-                    width: 120,
-                    height: 120,
-                    color: theme.colorScheme.surfaceContainerHighest,
-                    child: Icon(
-                      Icons.restaurant,
-                      size: 40,
-                      color: theme.colorScheme.onSurfaceVariant,
+            // Image Section (Full Width)
+            Stack(
+              children: [
+                Hero(
+                  tag: 'restaurant-image-${restaurant.id}',
+                  child: AspectRatio(
+                    aspectRatio: 16 / 9,
+                    child: Image.network(
+                      restaurant.pictureUrl, // Medium size
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Container(
+                        color: theme.colorScheme.surfaceContainerHighest,
+                        child: Icon(
+                          Icons.restaurant,
+                          size: 48,
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return Container(
+                          color: theme.colorScheme.surfaceContainerHighest,
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              value: loadingProgress.expectedTotalBytes != null
+                                  ? loadingProgress.cumulativeBytesLoaded /
+                                      loadingProgress.expectedTotalBytes!
+                                  : null,
+                            ),
+                          ),
+                        );
+                      },
                     ),
                   ),
-                  loadingBuilder: (context, child, loadingProgress) {
-                    if (loadingProgress == null) return child;
-                    return Container(
-                      width: 120,
-                      height: 120,
-                      color: theme.colorScheme.surfaceContainerHighest,
-                      child: Center(
-                        child: CircularProgressIndicator(
-                          value: loadingProgress.expectedTotalBytes != null
-                              ? loadingProgress.cumulativeBytesLoaded /
-                                    loadingProgress.expectedTotalBytes!
-                              : null,
-                          strokeWidth: 2,
-                        ),
-                      ),
-                    );
-                  },
                 ),
-              ),
-            ),
-
-            // Restaurant Info
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Name
-                    Hero(
-                      tag: 'restaurant-name-${restaurant.id}',
-                      child: Material(
-                        color: Colors.transparent,
-                        child: Text(
-                          restaurant.name,
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
+                // Rating Pill (Overlaid)
+                Positioned(
+                  top: 12,
+                  right: 12,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 6,
                     ),
-                    const SizedBox(height: 4),
-
-                    // City
-                    Row(
+                    decoration: BoxDecoration(
+                      color: AppColors.surface.withValues(alpha: 0.9),
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.1),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(
-                          Icons.location_on,
-                          size: 14,
-                          color: theme.colorScheme.primary,
+                        const Icon(
+                          Icons.star_rounded,
+                          size: 16,
+                          color: AppColors.star,
                         ),
                         const SizedBox(width: 4),
-                        Expanded(
-                          child: Text(
-                            restaurant.city,
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: theme.colorScheme.onSurfaceVariant,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
+                        Text(
+                          restaurant.rating.toString(),
+                          style: theme.textTheme.labelMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.textPrimary,
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 8),
-
-                    // Rating
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.primary.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.star,
-                            size: 16,
-                            color: theme.colorScheme.primary,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            restaurant.rating.toString(),
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: theme.colorScheme.primary,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
+              ],
             ),
 
-            // Trailing widget or arrow indicator
+            // Content Section
             Padding(
-              padding: const EdgeInsets.only(right: 8, top: 48),
-              child:
-                  trailing ??
-                  Icon(
-                    Icons.chevron_right,
-                    color: theme.colorScheme.onSurfaceVariant,
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Name
+                        Hero(
+                          tag: 'restaurant-name-${restaurant.id}',
+                          child: Material(
+                            color: Colors.transparent,
+                            child: Text(
+                              restaurant.name,
+                              style: theme.textTheme.titleLarge?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                height: 1.2,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        // City
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.location_on_outlined,
+                              size: 16,
+                              color: theme.colorScheme.primary,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              restaurant.city,
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                color: theme.colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
+                  if (trailing != null) trailing!,
+                ],
+              ),
             ),
           ],
         ),

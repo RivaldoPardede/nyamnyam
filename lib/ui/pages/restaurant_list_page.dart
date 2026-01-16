@@ -3,11 +3,11 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../data/models/restaurant.dart';
 import '../../providers/restaurant_list_provider.dart';
-import '../../providers/theme_provider.dart';
+import '../../utils/app_colors.dart';
 import '../../utils/result_state.dart';
 import '../widgets/restaurant_card.dart';
 
-/// Page displaying list of restaurants
+/// Modern Home Page displaying list of restaurants
 class RestaurantListPage extends StatefulWidget {
   const RestaurantListPage({super.key});
 
@@ -19,7 +19,6 @@ class _RestaurantListPageState extends State<RestaurantListPage> {
   @override
   void initState() {
     super.initState();
-    // Fetch restaurants when page loads
     Future.microtask(() {
       if (!mounted) return;
       context.read<RestaurantListProvider>().fetchRestaurants();
@@ -28,96 +27,188 @@ class _RestaurantListPageState extends State<RestaurantListPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    // Using CustomScrollView for premium feel with SliverAppBar
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('NyamNyam'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: () => context.push('/search'),
-            tooltip: 'Search',
-          ),
-          Consumer<ThemeProvider>(
-            builder: (context, themeProvider, _) {
-              final isDark = themeProvider.isDarkMode(context);
-              return IconButton(
-                icon: Icon(isDark ? Icons.light_mode : Icons.dark_mode),
-                onPressed: () => themeProvider.toggleTheme(),
-                tooltip: isDark ? 'Light Mode' : 'Dark Mode',
-              );
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.favorite_border),
-            onPressed: () => context.push('/favorites'),
-            tooltip: 'Favorites',
-          ),
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () => context.push('/settings'),
-            tooltip: 'Settings',
-          ),
-        ],
-      ),
-      body: Consumer<RestaurantListProvider>(
-        builder: (context, provider, _) {
-          return switch (provider.state) {
-            ResultStateNone() => _buildInitialState(),
-            ResultStateLoading() => _buildLoadingState(),
-            ResultStateSuccess<List<Restaurant>>(:final data) =>
-              _buildSuccessState(data),
-            ResultStateError(:final message) => _buildErrorState(message),
-          };
-        },
-      ),
-    );
-  }
-
-  Widget _buildInitialState() {
-    return const Center(child: Text('Press refresh to load restaurants'));
-  }
-
-  Widget _buildLoadingState() {
-    return const Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          CircularProgressIndicator(),
-          SizedBox(height: 16),
-          Text('Loading restaurants...'),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSuccessState(List<Restaurant> restaurants) {
-    if (restaurants.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.restaurant_menu,
-              size: 64,
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
+      body: RefreshIndicator(
+        onRefresh: () =>
+            context.read<RestaurantListProvider>().fetchRestaurants(),
+        color: AppColors.primary,
+        child: CustomScrollView(
+          slivers: [
+            // Modern Sliver App Bar
+            SliverAppBar(
+              floating: true,
+              pinned: true,
+              snap: false,
+              centerTitle: false,
+              backgroundColor: theme.scaffoldBackgroundColor,
+              surfaceTintColor: Colors.transparent,
+              title: Padding(
+                padding: const EdgeInsets.only(left: 8.0),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: AppColors.primary.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Icon(
+                        Icons.restaurant_menu_rounded,
+                        color: AppColors.primary,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Text(
+                      'NyamNyam',
+                      style: theme.textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: theme.colorScheme.onSurface,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
-            const SizedBox(height: 16),
-            Text(
-              'No restaurants found',
-              style: Theme.of(context).textTheme.titleMedium,
+
+            // Welcome & Categories Header (Simulated)
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Let\'s find your\nfavorite food!',
+                      style: theme.textTheme.headlineMedium?.copyWith(
+                        fontWeight: FontWeight.w800,
+                        height: 1.2,
+                        color: theme.colorScheme.onSurface,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    // Simulated Categories
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          _buildCategoryChip(
+                              theme, 'All', Icons.fastfood, true),
+                          _buildCategoryChip(
+                              theme, 'Nearby', Icons.location_on, false),
+                          _buildCategoryChip(
+                              theme, 'Top Rated', Icons.star, false),
+                          _buildCategoryChip(
+                              theme, 'New', Icons.new_releases, false),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
+
+            // Restaurant List
+            Consumer<RestaurantListProvider>(
+              builder: (context, provider, _) {
+                return switch (provider.state) {
+                  ResultStateNone() => const SliverFillRemaining(
+                    child: Center(child: Text('Press refresh')),
+                  ),
+                  ResultStateLoading() => const SliverFillRemaining(
+                    child: Center(child: CircularProgressIndicator()),
+                  ),
+                  ResultStateSuccess<List<Restaurant>>(:final data) =>
+                    _buildSliverList(data),
+                  ResultStateError(:final message) => SliverFillRemaining(
+                    child: _buildErrorState(message),
+                  ),
+                };
+              },
+            ),
+            // Bottom padding for scrolling
+            const SliverPadding(padding: EdgeInsets.only(bottom: 24)),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCategoryChip(
+    ThemeData theme,
+    String label,
+    IconData icon,
+    bool isSelected,
+  ) {
+    return Container(
+      margin: const EdgeInsets.only(right: 12),
+      child: Material(
+        color:
+            isSelected ? AppColors.primary : theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(24),
+        elevation: isSelected ? 4 : 0,
+        shadowColor: AppColors.primary.withValues(alpha: 0.3),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(24),
+          onTap: () {}, // Simulated
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(24),
+              border: isSelected
+                  ? null
+                  : Border.all(
+                      color: theme.dividerColor,
+                    ),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  icon,
+                  size: 18,
+                  color: isSelected ? Colors.white : AppColors.textSecondary,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  label,
+                  style: theme.textTheme.labelLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: isSelected ? Colors.white : AppColors.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSliverList(List<Restaurant> restaurants) {
+    if (restaurants.isEmpty) {
+      return SliverFillRemaining(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.restaurant_off,
+                size: 64,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+              const SizedBox(height: 16),
+              const Text('No restaurants found'),
+            ],
+          ),
         ),
       );
     }
 
-    return RefreshIndicator(
-      onRefresh: () =>
-          context.read<RestaurantListProvider>().fetchRestaurants(),
-      child: ListView.builder(
-        padding: const EdgeInsets.symmetric(vertical: 8),
-        itemCount: restaurants.length,
-        itemBuilder: (context, index) {
+    return SliverList(
+      delegate: SliverChildBuilderDelegate(
+        (context, index) {
           final restaurant = restaurants[index];
           return RestaurantCard(
             restaurant: restaurant,
@@ -126,6 +217,7 @@ class _RestaurantListPageState extends State<RestaurantListPage> {
             ),
           );
         },
+        childCount: restaurants.length,
       ),
     );
   }
@@ -146,25 +238,14 @@ class _RestaurantListPageState extends State<RestaurantListPage> {
             Text(
               'Oops! Something went wrong',
               style: Theme.of(context).textTheme.titleMedium,
-              textAlign: TextAlign.center,
             ),
             const SizedBox(height: 8),
-            Text(
-              message,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
-              textAlign: TextAlign.center,
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
-            ),
+            Text(message, textAlign: TextAlign.center),
             const SizedBox(height: 24),
-            ElevatedButton.icon(
-              onPressed: () {
-                context.read<RestaurantListProvider>().fetchRestaurants();
-              },
-              icon: const Icon(Icons.refresh),
-              label: const Text('Try Again'),
+            ElevatedButton(
+              onPressed: () =>
+                  context.read<RestaurantListProvider>().fetchRestaurants(),
+              child: const Text('Try Again'),
             ),
           ],
         ),

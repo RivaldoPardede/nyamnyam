@@ -6,7 +6,7 @@ import '../../providers/restaurant_search_provider.dart';
 import '../../utils/result_state.dart';
 import '../widgets/restaurant_card.dart';
 
-/// Page for searching restaurants
+/// Modern Search Page
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
 
@@ -21,7 +21,6 @@ class _SearchPageState extends State<SearchPage> {
   @override
   void initState() {
     super.initState();
-    // Auto-focus the search field
     Future.microtask(() {
       if (mounted) _focusNode.requestFocus();
     });
@@ -51,123 +50,110 @@ class _SearchPageState extends State<SearchPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Search'),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(60),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-            child: ValueListenableBuilder<TextEditingValue>(
-              valueListenable: _searchController,
-              builder: (context, value, _) {
-                return TextField(
-                  controller: _searchController,
-                  focusNode: _focusNode,
-                  decoration: InputDecoration(
-                    hintText: 'Search restaurants...',
-                    prefixIcon: const Icon(Icons.search),
-                    suffixIcon: value.text.isNotEmpty
-                        ? IconButton(
-                            icon: const Icon(Icons.clear),
-                            onPressed: _clearSearch,
-                          )
-                        : null,
-                    filled: true,
-                    fillColor: theme.colorScheme.surface,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
+      ),
+      body: Column(
+        children: [
+          // Modern Search Bar
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: TextField(
+              controller: _searchController,
+              focusNode: _focusNode,
+              decoration: InputDecoration(
+                hintText: 'Find restaurants, meals...',
+                prefixIcon: const Icon(Icons.search_rounded),
+                suffixIcon: _searchController.text.isNotEmpty
+                    ? IconButton(
+                        icon: const Icon(Icons.clear_rounded),
+                        onPressed: _clearSearch,
+                      )
+                    : null,
+              ),
+              textInputAction: TextInputAction.search,
+              onChanged: (value) {
+                setState(() {}); // Rebuild to show/hide clear icon
+                _onSearch(value);
+              },
+              onSubmitted: _onSearch,
+            ),
+          ),
+
+          // Results
+          Expanded(
+            child: Consumer<RestaurantSearchProvider>(
+              builder: (context, provider, _) {
+                return switch (provider.state) {
+                  ResultStateNone() => _buildInitialState(theme),
+                  ResultStateLoading() => const Center(
+                      child: CircularProgressIndicator(),
                     ),
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
-                    ),
-                  ),
-                  textInputAction: TextInputAction.search,
-                  onChanged: _onSearch,
-                  onSubmitted: _onSearch,
-                );
+                  ResultStateSuccess<List<Restaurant>>(:final data) =>
+                    _buildSuccessState(theme, data),
+                  ResultStateError(:final message) =>
+                    _buildErrorState(theme, message),
+                };
               },
             ),
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInitialState(ThemeData theme) {
+    return Center(
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.travel_explore_rounded,
+                size: 80,
+                color: theme.colorScheme.primary.withValues(alpha: 0.5),
+              ),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              'Discover Great Food',
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: theme.colorScheme.onSurface,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Enter a keyword to start searching',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ],
         ),
       ),
-      body: Consumer<RestaurantSearchProvider>(
-        builder: (context, provider, _) {
-          return switch (provider.state) {
-            ResultStateNone() => _buildInitialState(),
-            ResultStateLoading() => _buildLoadingState(),
-            ResultStateSuccess<List<Restaurant>>(:final data) =>
-              _buildSuccessState(data),
-            ResultStateError(:final message) => _buildErrorState(message),
-          };
-        },
-      ),
     );
   }
 
-  Widget _buildInitialState() {
-    final theme = Theme.of(context);
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.search,
-            size: 80,
-            color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'Search for restaurants',
-            style: theme.textTheme.titleMedium?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Type a keyword to find your favorite restaurant',
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildLoadingState() {
-    return const Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          CircularProgressIndicator(),
-          SizedBox(height: 16),
-          Text('Searching...'),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSuccessState(List<Restaurant> restaurants) {
+  Widget _buildSuccessState(ThemeData theme, List<Restaurant> restaurants) {
     if (restaurants.isEmpty) {
-      final theme = Theme.of(context);
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              Icons.search_off,
+              Icons.no_food_rounded,
               size: 64,
               color: theme.colorScheme.onSurfaceVariant,
             ),
             const SizedBox(height: 16),
-            Text('No restaurants found', style: theme.textTheme.titleMedium),
-            const SizedBox(height: 8),
             Text(
-              'Try a different keyword',
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
+              'No matches found',
+              style: theme.textTheme.titleMedium,
             ),
           ],
         ),
@@ -175,7 +161,7 @@ class _SearchPageState extends State<SearchPage> {
     }
 
     return ListView.builder(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.only(bottom: 24),
       itemCount: restaurants.length,
       itemBuilder: (context, index) {
         final restaurant = restaurants[index];
@@ -189,36 +175,22 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
-  Widget _buildErrorState(String message) {
-    final theme = Theme.of(context);
+  Widget _buildErrorState(ThemeData theme, String message) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.error_outline, size: 64, color: theme.colorScheme.error),
+            const Icon(Icons.wifi_off_rounded, size: 64, color: Colors.grey),
             const SizedBox(height: 16),
-            Text(
-              'Search failed',
-              style: theme.textTheme.titleMedium,
-              textAlign: TextAlign.center,
-            ),
+            Text('Search failed', style: theme.textTheme.titleMedium),
             const SizedBox(height: 8),
-            Text(
-              message,
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
-              textAlign: TextAlign.center,
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
-            ),
+            Text(message, textAlign: TextAlign.center),
             const SizedBox(height: 24),
-            ElevatedButton.icon(
+            ElevatedButton(
               onPressed: () => _onSearch(_searchController.text),
-              icon: const Icon(Icons.refresh),
-              label: const Text('Try Again'),
+              child: const Text('Try Again'),
             ),
           ],
         ),

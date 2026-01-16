@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../data/models/customer_review.dart';
 import '../../data/models/menu_item.dart';
@@ -6,9 +7,10 @@ import '../../data/models/restaurant.dart';
 import '../../data/models/restaurant_detail.dart';
 import '../../providers/favorite_provider.dart';
 import '../../providers/restaurant_detail_provider.dart';
+import '../../utils/app_colors.dart';
 import '../../utils/result_state.dart';
 
-/// Page displaying restaurant detail information
+/// Modern Restaurant Detail Page
 class RestaurantDetailPage extends StatefulWidget {
   final String restaurantId;
   final String restaurantName;
@@ -34,8 +36,8 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
     Future.microtask(() {
       if (!mounted) return;
       context.read<RestaurantDetailProvider>().fetchRestaurantDetail(
-        widget.restaurantId,
-      );
+            widget.restaurantId,
+          );
     });
   }
 
@@ -60,18 +62,13 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
           };
         },
       ),
+      floatingActionButton:
+          _buildFloatingFavoriteButton(), // FAB for favorite action
     );
   }
 
   Widget _buildLoadingState() {
-    return CustomScrollView(
-      slivers: [
-        _buildSliverAppBar(null),
-        const SliverFillRemaining(
-          child: Center(child: CircularProgressIndicator()),
-        ),
-      ],
-    );
+    return const Center(child: CircularProgressIndicator());
   }
 
   Widget _buildSuccessState(RestaurantDetail restaurant) {
@@ -82,60 +79,81 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
         _buildSliverAppBar(restaurant),
         SliverToBoxAdapter(
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Name with Hero
-                Hero(
-                  tag: 'restaurant-name-${restaurant.id}',
-                  child: Material(
-                    color: Colors.transparent,
-                    child: Text(
-                      restaurant.name,
-                      style: theme.textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                // Header Info
+                Text(
+                  restaurant.name,
+                  style: theme.textTheme.headlineMedium?.copyWith(
+                    fontWeight: FontWeight.w800,
+                    height: 1.2,
                   ),
                 ),
                 const SizedBox(height: 8),
-
-                // Location
                 Row(
                   children: [
-                    Icon(
-                      Icons.location_on,
+                    const Icon(
+                      Icons.location_on_rounded,
                       size: 18,
-                      color: theme.colorScheme.primary,
+                      color: AppColors.textSecondary,
                     ),
                     const SizedBox(width: 4),
                     Expanded(
                       child: Text(
                         '${restaurant.city} • ${restaurant.address}',
                         style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
+                          color: AppColors.textSecondary,
                         ),
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 16),
 
-                // Rating & Categories Row
-                Row(
-                  children: [
-                    _buildRatingBadge(restaurant.rating),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Wrap(
-                        spacing: 8,
-                        children: restaurant.categories
-                            .map((c) => _buildCategoryChip(c.name))
-                            .toList(),
+                // Stats Row (Rating, Categories)
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: AppColors.star.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                              color: AppColors.star.withValues(alpha: 0.5)),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.star_rounded,
+                                size: 20, color: AppColors.star),
+                            const SizedBox(width: 4),
+                            Text(
+                              restaurant.rating.toString(),
+                              style: theme.textTheme.labelLarge?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: const Color(0xFFB07B00), // Darker amber
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(width: 12),
+                      ...restaurant.categories.map((c) => Padding(
+                            padding: const EdgeInsets.only(right: 8),
+                            child: Chip(
+                              label: Text(c.name),
+                              backgroundColor: theme.colorScheme.surface,
+                              side: BorderSide(color: theme.dividerColor),
+                              visualDensity: VisualDensity.compact,
+                              labelStyle: theme.textTheme.bodySmall,
+                            ),
+                          )),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 24),
 
@@ -150,54 +168,39 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                 Text(
                   restaurant.description,
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant,
-                    height: 1.5,
+                    color: AppColors.textSecondary,
+                    height: 1.6,
                   ),
                 ),
-                const SizedBox(height: 24),
-
-                // Foods Menu
-                _buildMenuSection(
-                  title: 'Foods',
-                  icon: Icons.restaurant,
-                  items: restaurant.menus.foods,
-                ),
-                const SizedBox(height: 24),
-
-                // Drinks Menu
-                _buildMenuSection(
-                  title: 'Drinks',
-                  icon: Icons.local_cafe,
-                  items: restaurant.menus.drinks,
-                ),
-                const SizedBox(height: 24),
-
-                // Customer Reviews Section
-                Text(
-                  'Reviews',
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 12),
-
-                // Add Review Form
-                _buildAddReviewForm(restaurant.id),
-                const SizedBox(height: 16),
-
-                // Reviews List
-                if (restaurant.customerReviews.isNotEmpty)
-                  ...restaurant.customerReviews.map(_buildReviewCard)
-                else
-                  Text(
-                    'No reviews yet. Be the first to review!',
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-
-                // Bottom padding for safe area
                 const SizedBox(height: 32),
+
+                // Menus
+                _buildSectionTitle(theme, 'Foods', Icons.restaurant_menu),
+                const SizedBox(height: 12),
+                _buildHorizontalMenu(
+                    theme, restaurant.menus.foods, Icons.lunch_dining),
+                const SizedBox(height: 24),
+
+                _buildSectionTitle(theme, 'Drinks', Icons.local_bar),
+                const SizedBox(height: 12),
+                _buildHorizontalMenu(
+                    theme, restaurant.menus.drinks, Icons.local_drink),
+                const SizedBox(height: 32),
+
+                // Reviews
+                _buildSectionTitle(theme, 'Reviews', Icons.comment),
+                const SizedBox(height: 16),
+                _buildAddReviewForm(),
+                const SizedBox(height: 16),
+                ListView.separated(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: restaurant.customerReviews.length,
+                  separatorBuilder: (_, __) => const SizedBox(height: 12),
+                  itemBuilder: (context, index) =>
+                      _buildReviewTile(theme, restaurant.customerReviews[index]),
+                ),
+                const SizedBox(height: 80), // Fab space
               ],
             ),
           ),
@@ -206,392 +209,285 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
     );
   }
 
-  Widget _buildSliverAppBar(RestaurantDetail? restaurant) {
+  Widget _buildSliverAppBar(RestaurantDetail restaurant) {
     return SliverAppBar(
-      expandedHeight: 250,
+      expandedHeight: 300,
       pinned: true,
       stretch: true,
-      actions: restaurant != null ? [_buildFavoriteButton(restaurant)] : null,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      iconTheme: const IconThemeData(
+        color: Colors.white,
+        shadows: [Shadow(color: Colors.black54, blurRadius: 8)],
+      ),
       flexibleSpace: FlexibleSpaceBar(
-        title: Text(
-          restaurant?.name ?? widget.restaurantName,
-          style: const TextStyle(
-            shadows: [Shadow(color: Colors.black54, blurRadius: 8)],
-          ),
-        ),
-        background: restaurant != null
-            ? Hero(
-                tag: 'restaurant-image-${restaurant.id}',
-                child: Image.network(
-                  restaurant.largePictureUrl,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => Container(
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.surfaceContainerHighest,
-                    child: Icon(
-                      Icons.restaurant,
-                      size: 64,
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
-                  ),
+        stretchModes: const [
+          StretchMode.zoomBackground,
+          StretchMode.blurBackground,
+        ],
+        background: Stack(
+          fit: StackFit.expand,
+          children: [
+            Hero(
+              tag: 'restaurant-image-${restaurant.id}',
+              child: Image.network(
+                restaurant.largePictureUrl,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => Container(color: Colors.grey),
+              ),
+            ),
+            // Gradient Overlay for text readability (scrim)
+            const DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.black45,
+                    Colors.transparent,
+                    Colors.transparent,
+                    Colors.black54,
+                  ],
+                  stops: [0.0, 0.3, 0.6, 1.0],
                 ),
-              )
-            : Container(color: Theme.of(context).colorScheme.primary),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildFavoriteButton(RestaurantDetail restaurant) {
-    return FutureBuilder<bool>(
-      future: context.read<FavoriteProvider>().isFavorite(restaurant.id),
-      builder: (context, snapshot) {
-        final isFavorite = snapshot.data ?? false;
-        return IconButton(
-          icon: Icon(
-            isFavorite ? Icons.favorite : Icons.favorite_border,
-            color: isFavorite ? Colors.red : Colors.white,
-          ),
-          onPressed: () async {
-            final scaffoldMessenger = ScaffoldMessenger.of(context);
-            final simpleRestaurant = Restaurant(
-              id: restaurant.id,
-              name: restaurant.name,
-              description: restaurant.description,
-              pictureId: restaurant.pictureId,
-              city: restaurant.city,
-              rating: restaurant.rating,
+  Widget _buildFloatingFavoriteButton() {
+    return Consumer<RestaurantDetailProvider>(
+      builder: (context, provider, _) {
+        final data =
+            provider.state is ResultStateSuccess<RestaurantDetail>
+                ? (provider.state as ResultStateSuccess<RestaurantDetail>).data
+                : null;
+
+        if (data == null) return const SizedBox.shrink();
+
+        // Check favorite status
+        return FutureBuilder<bool>(
+          future: context.read<FavoriteProvider>().isFavorite(data.id),
+          builder: (context, snapshot) {
+            final isFavorite = snapshot.data ?? false;
+            return FloatingActionButton.extended(
+              onPressed: () async {
+                final restaurant = Restaurant(
+                  id: data.id,
+                  name: data.name,
+                  description: data.description,
+                  pictureId: data.pictureId,
+                  city: data.city,
+                  rating: data.rating,
+                );
+                final newStatus = await context
+                    .read<FavoriteProvider>()
+                    .toggleFavorite(restaurant);
+                
+                if (mounted) {
+                   ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        newStatus ? 'Added to favorites' : 'Removed from favorites',
+                      ),
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+                  setState(() {}); // Rebuild widget to update FAB state
+                }
+              },
+              icon: Icon(
+                isFavorite ? Icons.favorite : Icons.favorite_border,
+                color: isFavorite ? Colors.red : null,
+              ),
+              label: Text(isFavorite ? 'Saved' : 'Save'),
+              backgroundColor: Theme.of(context).colorScheme.surface,
+              foregroundColor: Theme.of(context).colorScheme.onSurface,
             );
-            final newStatus = await context
-                .read<FavoriteProvider>()
-                .toggleFavorite(simpleRestaurant);
-            if (mounted) {
-              scaffoldMessenger.showSnackBar(
-                SnackBar(
-                  content: Text(
-                    newStatus
-                        ? '${restaurant.name} added to favorites'
-                        : '${restaurant.name} removed from favorites',
-                  ),
-                  duration: const Duration(seconds: 2),
-                ),
-              );
-              // Force rebuild to update icon
-              (context as Element).markNeedsBuild();
-            }
           },
         );
       },
     );
   }
 
-  Widget _buildRatingBadge(double rating) {
-    final theme = Theme.of(context);
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.primary,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Icon(Icons.star, size: 18, color: Colors.white),
-          const SizedBox(width: 4),
-          Text(
-            rating.toString(),
-            style: theme.textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
+  Widget _buildSectionTitle(ThemeData theme, String title, IconData icon) {
+    return Row(
+      children: [
+        Icon(icon, size: 20, color: theme.colorScheme.primary),
+        const SizedBox(width: 8),
+        Text(
+          title,
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold,
           ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildHorizontalMenu(
+    ThemeData theme,
+    List<MenuItem> items,
+    IconData placeholderIcon,
+  ) {
+    return SizedBox(
+      height: 100,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: items.length,
+        itemBuilder: (context, index) {
+          return Container(
+            width: 100,
+            margin: const EdgeInsets.only(right: 12),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: theme.dividerColor.withValues(alpha: 0.5)),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(placeholderIcon,
+                    size: 28,
+                    color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5)),
+                const SizedBox(height: 8),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: Text(
+                    items[index].name,
+                    textAlign: TextAlign.center,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildReviewTile(ThemeData theme, CustomerReview review) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: theme.dividerColor.withValues(alpha: 0.5)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              CircleAvatar(
+                radius: 16,
+                backgroundColor: theme.colorScheme.primaryContainer,
+                child: Text(
+                  review.name.isNotEmpty ? review.name[0].toUpperCase() : '?',
+                  style: TextStyle(
+                    color: theme.colorScheme.onPrimaryContainer,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      review.name,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      review.date,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: AppColors.textSecondary,
+                        fontSize: 10,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text(review.review, style: theme.textTheme.bodyMedium),
         ],
       ),
     );
   }
 
-  Widget _buildCategoryChip(String name) {
-    final theme = Theme.of(context);
-    return Chip(
-      label: Text(name, style: theme.textTheme.bodySmall),
-      padding: EdgeInsets.zero,
-      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-      visualDensity: VisualDensity.compact,
-    );
-  }
-
-  Widget _buildMenuSection({
-    required String title,
-    required IconData icon,
-    required List<MenuItem> items,
-  }) {
-    final theme = Theme.of(context);
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Icon(icon, size: 20, color: theme.colorScheme.primary),
-            const SizedBox(width: 8),
-            Text(
-              title,
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: items.map((item) => _buildMenuItem(item.name)).toList(),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildMenuItem(String name) {
-    final theme = Theme.of(context);
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: theme.colorScheme.outline.withValues(alpha: 0.2),
-        ),
-      ),
-      child: Text(name, style: theme.textTheme.bodySmall),
-    );
-  }
-
-  Widget _buildReviewCard(CustomerReview review) {
-    final theme = Theme.of(context);
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                CircleAvatar(
-                  radius: 16,
-                  backgroundColor: theme.colorScheme.primary,
-                  child: Text(
-                    review.name.isNotEmpty ? review.name[0].toUpperCase() : '?',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        review.name,
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        review.date,
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Text(review.review, style: theme.textTheme.bodyMedium),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildErrorState(String message) {
-    return CustomScrollView(
-      slivers: [
-        _buildSliverAppBar(null),
-        SliverFillRemaining(
-          child: Center(
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.error_outline,
-                    size: 64,
-                    color: Theme.of(context).colorScheme.error,
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Failed to load details',
-                    style: Theme.of(context).textTheme.titleMedium,
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    message,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
-                    textAlign: TextAlign.center,
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 24),
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      context
-                          .read<RestaurantDetailProvider>()
-                          .fetchRestaurantDetail(widget.restaurantId);
-                    },
-                    icon: const Icon(Icons.refresh),
-                    label: const Text('Try Again'),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildAddReviewForm(String restaurantId) {
-    final theme = Theme.of(context);
-
+  Widget _buildAddReviewForm() {
     return Consumer<RestaurantDetailProvider>(
       builder: (context, provider, _) {
-        return Card(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Add Your Review',
-                    style: theme.textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-
-                  // Name Field
-                  TextFormField(
-                    controller: _nameController,
-                    decoration: const InputDecoration(
-                      labelText: 'Your Name',
-                      hintText: 'Enter your name',
-                      prefixIcon: Icon(Icons.person),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
-                        return 'Please enter your name';
-                      }
-                      return null;
-                    },
-                    enabled: !provider.isSubmittingReview,
-                  ),
-                  const SizedBox(height: 12),
-
-                  // Review Field
-                  TextFormField(
-                    controller: _reviewController,
-                    decoration: const InputDecoration(
-                      labelText: 'Your Review',
-                      hintText: 'Share your experience...',
-                      prefixIcon: Icon(Icons.rate_review),
-                      alignLabelWithHint: true,
-                    ),
-                    maxLines: 3,
-                    validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
-                        return 'Please enter your review';
-                      }
-                      return null;
-                    },
-                    enabled: !provider.isSubmittingReview,
-                  ),
-                  const SizedBox(height: 12),
-
-                  // Error Message
-                  if (provider.reviewError != null)
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 12),
-                      child: Text(
-                        'Failed to submit review. Please try again.',
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.error,
-                        ),
-                      ),
-                    ),
-
-                  // Submit Button
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton.icon(
-                      onPressed: provider.isSubmittingReview
-                          ? null
-                          : () => _submitReview(restaurantId),
-                      icon: provider.isSubmittingReview
-                          ? const SizedBox(
-                              width: 16,
-                              height: 16,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: Colors.white,
-                              ),
-                            )
-                          : const Icon(Icons.send),
-                      label: Text(
-                        provider.isSubmittingReview
-                            ? 'Submitting...'
-                            : 'Submit Review',
-                      ),
-                    ),
-                  ),
-                ],
+        final isSubmitting = provider.isSubmittingReview;
+        
+        return Column(
+          children: [
+            TextField(
+              controller: _nameController,
+              decoration: const InputDecoration(
+                hintText: 'Name',
+                prefixIcon: Icon(Icons.person_outline),
+              ),
+              enabled: !isSubmitting,
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: _reviewController,
+              decoration: const InputDecoration(
+                hintText: 'Write a review...',
+                prefixIcon: Icon(Icons.edit_outlined),
+              ),
+              maxLines: 2,
+              enabled: !isSubmitting,
+            ),
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: isSubmitting
+                    ? null
+                    : () {
+                         if (_nameController.text.isNotEmpty && _reviewController.text.isNotEmpty) {
+                           context.read<RestaurantDetailProvider>().addReview(
+                             restaurantId: widget.restaurantId,
+                             name: _nameController.text,
+                             review: _reviewController.text,
+                           ).then((success) {
+                             if (success && mounted) {
+                               _nameController.clear();
+                               _reviewController.clear();
+                             }
+                           });
+                         }
+                      },
+                child: isSubmitting
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Text('Post Review'),
               ),
             ),
-          ),
+          ],
         );
       },
     );
   }
 
-  Future<void> _submitReview(String restaurantId) async {
-    if (!_formKey.currentState!.validate()) return;
-
-    final success = await context.read<RestaurantDetailProvider>().addReview(
-      restaurantId: restaurantId,
-      name: _nameController.text.trim(),
-      review: _reviewController.text.trim(),
-    );
-
-    if (success && mounted) {
-      _nameController.clear();
-      _reviewController.clear();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Review submitted successfully!'),
-          backgroundColor: Colors.green,
-        ),
-      );
-    }
+  Widget _buildErrorState(String message) {
+    return Center(child: Text(message));
   }
 }

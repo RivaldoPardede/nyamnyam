@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/reminder_provider.dart';
 import '../../providers/theme_provider.dart';
+import '../../utils/app_colors.dart';
 
-/// Page for app settings (theme, notifications)
+/// Modern Settings Page with Grouped sections
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
 
@@ -14,82 +15,126 @@ class SettingsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Settings')),
       body: ListView(
+        padding: const EdgeInsets.all(16),
         children: [
-          // Theme Section
-          _buildSectionHeader(theme, 'Appearance'),
-          Consumer<ThemeProvider>(
-            builder: (context, themeProvider, _) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 8),
-                    Text('Theme Mode', style: theme.textTheme.bodyMedium),
-                    const SizedBox(height: 12),
-                    SegmentedButton<ThemeMode>(
-                      segments: const [
-                        ButtonSegment(
-                          value: ThemeMode.system,
-                          icon: Icon(Icons.settings_suggest),
-                          label: Text('System'),
+          // Appearance Section
+          _buildSectionTitle(theme, 'Appearance'),
+          _buildSettingsContainer(
+            theme,
+            children: [
+              Consumer<ThemeProvider>(
+                builder: (context, themeProvider, _) {
+                  return Column(
+                    children: [
+                      ListTile(
+                        leading: _buildIcon(
+                            Icons.palette_rounded, Colors.purple, theme),
+                        title: const Text('Theme Mode'),
+                        subtitle: Text(
+                          _getThemeName(themeProvider.themeMode),
+                          style: TextStyle(color: theme.colorScheme.primary),
                         ),
-                        ButtonSegment(
-                          value: ThemeMode.light,
-                          icon: Icon(Icons.light_mode),
-                          label: Text('Light'),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                        child: SegmentedButton<ThemeMode>(
+                          segments: const [
+                            ButtonSegment(
+                              value: ThemeMode.system,
+                              label: Text('System'),
+                              icon: Icon(Icons.settings_suggest),
+                            ),
+                            ButtonSegment(
+                              value: ThemeMode.light,
+                              label: Text('Light'),
+                              icon: Icon(Icons.light_mode),
+                            ),
+                            ButtonSegment(
+                              value: ThemeMode.dark,
+                              label: Text('Dark'),
+                              icon: Icon(Icons.dark_mode),
+                            ),
+                          ],
+                          selected: {themeProvider.themeMode},
+                          onSelectionChanged: (selection) {
+                            themeProvider.setThemeMode(selection.first);
+                          },
+                          style: ButtonStyle(
+                            visualDensity: VisualDensity.compact,
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          ),
                         ),
-                        ButtonSegment(
-                          value: ThemeMode.dark,
-                          icon: Icon(Icons.dark_mode),
-                          label: Text('Dark'),
-                        ),
-                      ],
-                      selected: {themeProvider.themeMode},
-                      onSelectionChanged: (selection) {
-                        themeProvider.setThemeMode(selection.first);
-                      },
-                    ),
-                    const SizedBox(height: 8),
-                  ],
-                ),
-              );
-            },
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ],
           ),
-
-          const Divider(),
+          const SizedBox(height: 24),
 
           // Notifications Section
-          _buildSectionHeader(theme, 'Notifications'),
-          Consumer<ReminderProvider>(
-            builder: (context, reminderProvider, _) {
-              return SwitchListTile(
-                secondary: const Icon(Icons.notifications),
-                title: const Text('Daily Reminder'),
-                subtitle: const Text('Get reminded for lunch at 11:00 AM'),
-                value: reminderProvider.isEnabled,
-                onChanged: (value) => reminderProvider.setReminder(value),
-              );
-            },
+          _buildSectionTitle(theme, 'Notifications'),
+          _buildSettingsContainer(
+            theme,
+            children: [
+              Consumer<ReminderProvider>(
+                builder: (context, reminderProvider, _) {
+                  return SwitchListTile(
+                    secondary: _buildIcon(
+                        Icons.notifications_active_rounded, Colors.orange, theme),
+                    title: const Text('Daily Reminder'),
+                    subtitle: const Text('Lunch alert at 11:00 AM'),
+                    value: reminderProvider.isEnabled,
+                    onChanged: (value) => reminderProvider.setReminder(value),
+                    activeColor: AppColors.primary,
+                  );
+                },
+              ),
+            ],
           ),
-
-          const Divider(),
+          const SizedBox(height: 24),
 
           // About Section
-          _buildSectionHeader(theme, 'About'),
-          const ListTile(
-            leading: Icon(Icons.info_outline),
-            title: Text('App Version'),
-            subtitle: Text('1.0.0'),
+          _buildSectionTitle(theme, 'About'),
+          _buildSettingsContainer(
+            theme,
+            children: [
+              ListTile(
+                leading: _buildIcon(Icons.info_rounded, Colors.blue, theme),
+                title: const Text('App Version'),
+                trailing: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.surfaceContainerHighest,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    'v1.0.0',
+                    style: theme.textTheme.labelMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+              const Divider(height: 1, indent: 56),
+              ListTile(
+                leading: _buildIcon(Icons.code_rounded, Colors.grey, theme),
+                title: const Text('Developed by'),
+                subtitle: const Text('New Model AI Assistant'),
+                onTap: () {},
+              ),
+            ],
           ),
         ],
       ),
     );
   }
 
-  Widget _buildSectionHeader(ThemeData theme, String title) {
+  Widget _buildSectionTitle(ThemeData theme, String title) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+      padding: const EdgeInsets.only(left: 4, bottom: 8),
       child: Text(
         title,
         style: theme.textTheme.titleSmall?.copyWith(
@@ -98,5 +143,42 @@ class SettingsPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget _buildSettingsContainer(ThemeData theme,
+      {required List<Widget> children}) {
+    return Container(
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(children: children),
+    );
+  }
+
+  Widget _buildIcon(IconData icon, Color color, ThemeData theme) {
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Icon(icon, color: color, size: 20),
+    );
+  }
+
+  String _getThemeName(ThemeMode mode) {
+    return switch (mode) {
+      ThemeMode.system => 'System Default',
+      ThemeMode.light => 'Light Mode',
+      ThemeMode.dark => 'Dark Mode',
+    };
   }
 }

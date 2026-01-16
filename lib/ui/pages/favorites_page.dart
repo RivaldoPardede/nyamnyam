@@ -5,7 +5,7 @@ import '../../data/models/restaurant.dart';
 import '../../providers/favorite_provider.dart';
 import '../widgets/restaurant_card.dart';
 
-/// Page displaying list of favorite restaurants
+/// Modern Favorites Page
 class FavoritesPage extends StatefulWidget {
   const FavoritesPage({super.key});
 
@@ -27,8 +27,13 @@ class _FavoritesPageState extends State<FavoritesPage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
+    // Using CustomScrollView to handle potential connection with sliver app bars in future
+    // though here just a simple list is fine, but for consistency we use simple Scaffold body
     return Scaffold(
-      appBar: AppBar(title: const Text('Favorites')),
+      appBar: AppBar(
+        title: const Text('Favorites'),
+        centerTitle: true,
+      ),
       body: Consumer<FavoriteProvider>(
         builder: (context, provider, _) {
           if (provider.isLoading) {
@@ -54,23 +59,31 @@ class _FavoritesPageState extends State<FavoritesPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.favorite_border,
-            size: 80,
-            color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+          Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.favorite_border_rounded,
+              size: 80,
+              color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+            ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 24),
           Text(
             'No favorites yet',
-            style: theme.textTheme.titleMedium?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
+            style: theme.textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: theme.colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 8),
           Text(
-            'Add restaurants to your favorites\nto see them here',
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+            'Save restaurants you love\nto find them easily later',
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
             ),
             textAlign: TextAlign.center,
           ),
@@ -86,27 +99,17 @@ class _FavoritesPageState extends State<FavoritesPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.error_outline, size: 64, color: theme.colorScheme.error),
+            const Icon(Icons.error_outline_rounded, size: 64, color: Colors.grey),
             const SizedBox(height: 16),
-            Text(
-              'Failed to load favorites',
-              style: theme.textTheme.titleMedium,
-              textAlign: TextAlign.center,
-            ),
+            Text('Failed to load favorites', style: theme.textTheme.titleMedium),
             const SizedBox(height: 8),
-            Text(
-              message,
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
-              textAlign: TextAlign.center,
-            ),
+            Text(message, textAlign: TextAlign.center),
             const SizedBox(height: 24),
             ElevatedButton.icon(
               onPressed: () {
                 context.read<FavoriteProvider>().loadFavorites();
               },
-              icon: const Icon(Icons.refresh),
+              icon: const Icon(Icons.refresh_rounded),
               label: const Text('Try Again'),
             ),
           ],
@@ -127,7 +130,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
             '/detail/${restaurant.id}?name=${Uri.encodeComponent(restaurant.name)}',
           ),
           trailing: IconButton(
-            icon: const Icon(Icons.favorite, color: Colors.red),
+            icon: const Icon(Icons.favorite_rounded, color: Colors.red),
             onPressed: () async {
               final scaffoldMessenger = ScaffoldMessenger.of(context);
               await context.read<FavoriteProvider>().removeFavorite(
@@ -137,7 +140,9 @@ class _FavoritesPageState extends State<FavoritesPage> {
                 scaffoldMessenger.showSnackBar(
                   SnackBar(
                     content: Text('${restaurant.name} removed from favorites'),
+                    behavior: SnackBarBehavior.floating, // Modern floating snackbar
                     duration: const Duration(seconds: 2),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
                 );
               }
