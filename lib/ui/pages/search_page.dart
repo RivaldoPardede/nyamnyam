@@ -53,25 +53,27 @@ class _SearchPageState extends State<SearchPage> {
           // Modern Search Bar
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: TextField(
-              controller: _searchController,
-              focusNode: _focusNode,
-              decoration: InputDecoration(
-                hintText: 'Find restaurants, meals...',
-                prefixIcon: const Icon(Icons.search_rounded),
-                suffixIcon: _searchController.text.isNotEmpty
-                    ? IconButton(
-                        icon: const Icon(Icons.clear_rounded),
-                        onPressed: _clearSearch,
-                      )
-                    : null,
-              ),
-              textInputAction: TextInputAction.search,
-              onChanged: (value) {
-                setState(() {});
-                _onSearch(value);
+            child: ValueListenableBuilder<TextEditingValue>(
+              valueListenable: _searchController,
+              builder: (_, value, child) {
+                return TextField(
+                  controller: _searchController,
+                  focusNode: _focusNode,
+                  decoration: InputDecoration(
+                    hintText: 'Find restaurants, meals...',
+                    prefixIcon: const Icon(Icons.search_rounded),
+                    suffixIcon: value.text.isNotEmpty
+                        ? IconButton(
+                            icon: const Icon(Icons.clear_rounded),
+                            onPressed: _clearSearch,
+                          )
+                        : null,
+                  ),
+                  textInputAction: TextInputAction.search,
+                  onChanged: _onSearch,
+                  onSubmitted: _onSearch,
+                );
               },
-              onSubmitted: _onSearch,
             ),
           ),
 

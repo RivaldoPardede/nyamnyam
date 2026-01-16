@@ -35,6 +35,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
       context.read<RestaurantDetailProvider>().fetchRestaurantDetail(
         widget.restaurantId,
       );
+      context.read<FavoriteProvider>().loadFavorites();
     });
   }
 
@@ -280,11 +281,10 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
 
         if (data == null) return const SizedBox.shrink();
 
-        // Check favorite status
-        return FutureBuilder<bool>(
-          future: context.read<FavoriteProvider>().isFavorite(data.id),
-          builder: (_, snapshot) {
-            final isFavorite = snapshot.data ?? false;
+        // Check favorite status using Consumer to watch favorites list
+        return Consumer<FavoriteProvider>(
+          builder: (_, favoriteProvider, child) {
+            final isFavorite = favoriteProvider.favorites.any((r) => r.id == data.id);
             return FloatingActionButton.extended(
               onPressed: () async {
                 final restaurant = Restaurant(
@@ -310,7 +310,6 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                       behavior: SnackBarBehavior.floating,
                     ),
                   );
-                  setState(() {}); // Rebuild widget to update FAB state
                 }
               },
               icon: Icon(

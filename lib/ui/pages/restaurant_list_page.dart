@@ -70,55 +70,17 @@ class _RestaurantListPageState extends State<RestaurantListPage> {
               ),
             ),
 
-            // Welcome & Categories Header (Simulated)
+            // Welcome Header
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Let\'s find your\nfavorite food!',
-                      style: theme.textTheme.headlineMedium?.copyWith(
-                        fontWeight: FontWeight.w800,
-                        height: 1.2,
-                        color: theme.colorScheme.onSurface,
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    // Simulated Categories
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: [
-                          _buildCategoryChip(
-                            theme,
-                            'All',
-                            Icons.fastfood,
-                            true,
-                          ),
-                          _buildCategoryChip(
-                            theme,
-                            'Nearby',
-                            Icons.location_on,
-                            false,
-                          ),
-                          _buildCategoryChip(
-                            theme,
-                            'Top Rated',
-                            Icons.star,
-                            false,
-                          ),
-                          _buildCategoryChip(
-                            theme,
-                            'New',
-                            Icons.new_releases,
-                            false,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+                child: Text(
+                  'Let\'s find your\nfavorite food!',
+                  style: theme.textTheme.headlineMedium?.copyWith(
+                    fontWeight: FontWeight.w800,
+                    height: 1.2,
+                    color: theme.colorScheme.onSurface,
+                  ),
                 ),
               ),
             ),
@@ -144,51 +106,6 @@ class _RestaurantListPageState extends State<RestaurantListPage> {
             // Bottom padding for scrolling
             const SliverPadding(padding: EdgeInsets.only(bottom: 24)),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildCategoryChip(
-    ThemeData theme,
-    String label,
-    IconData icon,
-    bool isSelected,
-  ) {
-    return Container(
-      margin: const EdgeInsets.only(right: 12),
-      child: Material(
-        color: isSelected ? AppColors.primary : theme.colorScheme.surface,
-        borderRadius: BorderRadius.circular(24),
-        elevation: isSelected ? 4 : 0,
-        shadowColor: AppColors.primary.withValues(alpha: 0.3),
-        child: InkWell(
-          borderRadius: BorderRadius.circular(24),
-          onTap: () {}, // Simulated
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(24),
-              border: isSelected ? null : Border.all(color: theme.dividerColor),
-            ),
-            child: Row(
-              children: [
-                Icon(
-                  icon,
-                  size: 18,
-                  color: isSelected ? Colors.white : AppColors.textSecondary,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  label,
-                  style: theme.textTheme.labelLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: isSelected ? Colors.white : AppColors.textSecondary,
-                  ),
-                ),
-              ],
-            ),
-          ),
         ),
       ),
     );
