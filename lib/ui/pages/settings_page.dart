@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../providers/reminder_provider.dart';
 import '../../providers/theme_provider.dart';
 
 /// Page for app settings (theme, notifications)
@@ -24,10 +25,7 @@ class SettingsPage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 8),
-                    Text(
-                      'Theme Mode',
-                      style: theme.textTheme.bodyMedium,
-                    ),
+                    Text('Theme Mode', style: theme.textTheme.bodyMedium),
                     const SizedBox(height: 12),
                     SegmentedButton<ThemeMode>(
                       segments: const [
@@ -61,14 +59,18 @@ class SettingsPage extends StatelessWidget {
 
           const Divider(),
 
-          // Notifications Section (placeholder for Phase 4)
+          // Notifications Section
           _buildSectionHeader(theme, 'Notifications'),
-          SwitchListTile(
-            secondary: const Icon(Icons.notifications),
-            title: const Text('Daily Reminder'),
-            subtitle: const Text('Get reminded for lunch at 11:00 AM'),
-            value: false,
-            onChanged: null, // Will be implemented in Phase 4
+          Consumer<ReminderProvider>(
+            builder: (context, reminderProvider, _) {
+              return SwitchListTile(
+                secondary: const Icon(Icons.notifications),
+                title: const Text('Daily Reminder'),
+                subtitle: const Text('Get reminded for lunch at 11:00 AM'),
+                value: reminderProvider.isEnabled,
+                onChanged: (value) => reminderProvider.setReminder(value),
+              );
+            },
           ),
 
           const Divider(),

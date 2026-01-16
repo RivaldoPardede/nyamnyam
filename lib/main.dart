@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'providers/favorite_provider.dart';
+import 'providers/reminder_provider.dart';
 import 'providers/restaurant_detail_provider.dart';
 import 'providers/restaurant_list_provider.dart';
 import 'providers/restaurant_search_provider.dart';
@@ -9,6 +10,7 @@ import 'utils/app_router.dart';
 import 'utils/app_theme.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const NyamNyamApp());
 }
 
@@ -25,11 +27,18 @@ class NyamNyamApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (_) {
             final provider = ThemeProvider();
-            provider.loadTheme(); // Load saved theme on startup
+            provider.loadTheme();
             return provider;
           },
         ),
         ChangeNotifierProvider(create: (_) => FavoriteProvider()),
+        ChangeNotifierProvider(
+          create: (_) {
+            final provider = ReminderProvider();
+            provider.loadReminder();
+            return provider;
+          },
+        ),
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, _) {
