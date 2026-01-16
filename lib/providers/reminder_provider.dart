@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../data/local/preferences_service.dart';
+import '../data/services/background_service.dart';
 import '../data/services/notification_service.dart';
 
 /// Provider for managing daily reminder settings
@@ -27,7 +28,7 @@ class ReminderProvider extends ChangeNotifier {
     _isEnabled = await _prefsService.getDailyReminderEnabled();
     _isInitialized = true;
 
-    // If enabled, ensure it's scheduled
+    // If enabled, ensure Workmanager task is registered
     if (_isEnabled) {
       await _scheduleReminder();
     }
@@ -43,7 +44,7 @@ class ReminderProvider extends ChangeNotifier {
     if (_isEnabled) {
       await _scheduleReminder();
     } else {
-      await _notificationService.cancelDailyReminder();
+      await _cancelReminder();
     }
 
     notifyListeners();
@@ -59,20 +60,25 @@ class ReminderProvider extends ChangeNotifier {
     if (enabled) {
       await _scheduleReminder();
     } else {
-      await _notificationService.cancelDailyReminder();
+      await _cancelReminder();
     }
 
     notifyListeners();
   }
 
   Future<void> _scheduleReminder() async {
-    // Request permissions first
+    // Request notification permissions first
     await _notificationService.requestPermissions();
 
-    // Schedule the daily reminder
-    await _notificationService.scheduleDailyReminder(
-      title: '🍽️ NyamNyam Reminder',
-      body: "It's lunch time! Check out some great restaurants near you.",
-    );
+    // Register Workmanager periodic task for random restaurant notification
+    await BackgroundService.registerDailyReminder();
+  }
+
+  Future<void> _cancelReminder() async {
+    // Cancel Workmanager task
+    await BackgroundService.cancelDailyReminder();
+    
+    // Also cancel any pending notifications
+    await _notificationService.cancelDailyReminder();
   }
 }

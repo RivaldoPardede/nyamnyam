@@ -27,7 +27,6 @@ class RestaurantDetailPage extends StatefulWidget {
 class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _reviewController = TextEditingController();
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {

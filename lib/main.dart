@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'data/services/background_service.dart';
 import 'providers/favorite_provider.dart';
 import 'providers/reminder_provider.dart';
 import 'providers/restaurant_detail_provider.dart';
@@ -9,8 +10,12 @@ import 'providers/theme_provider.dart';
 import 'utils/app_router.dart';
 import 'utils/app_theme.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize Workmanager for background tasks
+  await BackgroundService.initialize();
+  
   runApp(const NyamNyamApp());
 }
 
