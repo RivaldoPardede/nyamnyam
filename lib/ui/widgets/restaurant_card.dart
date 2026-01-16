@@ -6,11 +6,7 @@ class RestaurantCard extends StatelessWidget {
   final Restaurant restaurant;
   final VoidCallback? onTap;
 
-  const RestaurantCard({
-    super.key,
-    required this.restaurant,
-    this.onTap,
-  });
+  const RestaurantCard({super.key, required this.restaurant, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +53,7 @@ class RestaurantCard extends StatelessWidget {
                         child: CircularProgressIndicator(
                           value: loadingProgress.expectedTotalBytes != null
                               ? loadingProgress.cumulativeBytesLoaded /
-                                  loadingProgress.expectedTotalBytes!
+                                    loadingProgress.expectedTotalBytes!
                               : null,
                           strokeWidth: 2,
                         ),

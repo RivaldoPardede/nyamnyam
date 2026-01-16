@@ -55,35 +55,37 @@ class _SearchPageState extends State<SearchPage> {
           preferredSize: const Size.fromHeight(60),
           child: Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-            child: TextField(
-              controller: _searchController,
-              focusNode: _focusNode,
-              decoration: InputDecoration(
-                hintText: 'Search restaurants...',
-                prefixIcon: const Icon(Icons.search),
-                suffixIcon: _searchController.text.isNotEmpty
-                    ? IconButton(
-                        icon: const Icon(Icons.clear),
-                        onPressed: _clearSearch,
-                      )
-                    : null,
-                filled: true,
-                fillColor: theme.colorScheme.surface,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide.none,
-                ),
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
-              ),
-              textInputAction: TextInputAction.search,
-              onChanged: (value) {
-                setState(() {}); // Update suffix icon visibility
-                _onSearch(value);
+            child: ValueListenableBuilder<TextEditingValue>(
+              valueListenable: _searchController,
+              builder: (context, value, _) {
+                return TextField(
+                  controller: _searchController,
+                  focusNode: _focusNode,
+                  decoration: InputDecoration(
+                    hintText: 'Search restaurants...',
+                    prefixIcon: const Icon(Icons.search),
+                    suffixIcon: value.text.isNotEmpty
+                        ? IconButton(
+                            icon: const Icon(Icons.clear),
+                            onPressed: _clearSearch,
+                          )
+                        : null,
+                    filled: true,
+                    fillColor: theme.colorScheme.surface,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                  ),
+                  textInputAction: TextInputAction.search,
+                  onChanged: _onSearch,
+                  onSubmitted: _onSearch,
+                );
               },
-              onSubmitted: _onSearch,
             ),
           ),
         ),
@@ -159,10 +161,7 @@ class _SearchPageState extends State<SearchPage> {
               color: theme.colorScheme.onSurfaceVariant,
             ),
             const SizedBox(height: 16),
-            Text(
-              'No restaurants found',
-              style: theme.textTheme.titleMedium,
-            ),
+            Text('No restaurants found', style: theme.textTheme.titleMedium),
             const SizedBox(height: 8),
             Text(
               'Try a different keyword',
@@ -206,11 +205,7 @@ class _SearchPageState extends State<SearchPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.error_outline,
-              size: 64,
-              color: theme.colorScheme.error,
-            ),
+            Icon(Icons.error_outline, size: 64, color: theme.colorScheme.error),
             const SizedBox(height: 16),
             Text(
               'Search failed',

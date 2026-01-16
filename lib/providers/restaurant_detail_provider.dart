@@ -7,7 +7,7 @@ class RestaurantDetailProvider extends ChangeNotifier {
   final ApiService _apiService;
 
   RestaurantDetailProvider({ApiService? apiService})
-      : _apiService = apiService ?? ApiService();
+    : _apiService = apiService ?? ApiService();
 
   ResultState<RestaurantDetail> _state = const ResultStateNone();
   bool _isSubmittingReview = false;

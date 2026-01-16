@@ -7,7 +7,7 @@ class RestaurantListProvider extends ChangeNotifier {
   final ApiService _apiService;
 
   RestaurantListProvider({ApiService? apiService})
-      : _apiService = apiService ?? ApiService();
+    : _apiService = apiService ?? ApiService();
 
   ResultState<List<Restaurant>> _state = const ResultStateNone();
 

@@ -30,8 +30,8 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
     Future.microtask(() {
       if (!mounted) return;
       context.read<RestaurantDetailProvider>().fetchRestaurantDetail(
-            widget.restaurantId,
-          );
+        widget.restaurantId,
+      );
     });
   }
 
@@ -64,9 +64,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
       slivers: [
         _buildSliverAppBar(null),
         const SliverFillRemaining(
-          child: Center(
-            child: CircularProgressIndicator(),
-          ),
+          child: Center(child: CircularProgressIndicator()),
         ),
       ],
     );
@@ -178,7 +176,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                   ),
                 ),
                 const SizedBox(height: 12),
-                
+
                 // Add Review Form
                 _buildAddReviewForm(restaurant.id),
                 const SizedBox(height: 16),
@@ -213,9 +211,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
         title: Text(
           restaurant?.name ?? widget.restaurantName,
           style: const TextStyle(
-            shadows: [
-              Shadow(color: Colors.black54, blurRadius: 8),
-            ],
+            shadows: [Shadow(color: Colors.black54, blurRadius: 8)],
           ),
         ),
         background: restaurant != null
@@ -225,7 +221,9 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                   restaurant.largePictureUrl,
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) => Container(
-                    color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.surfaceContainerHighest,
                     child: Icon(
                       Icons.restaurant,
                       size: 64,
@@ -234,9 +232,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                   ),
                 ),
               )
-            : Container(
-                color: Theme.of(context).colorScheme.primary,
-              ),
+            : Container(color: Theme.of(context).colorScheme.primary),
       ),
     );
   }
@@ -269,10 +265,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
   Widget _buildCategoryChip(String name) {
     final theme = Theme.of(context);
     return Chip(
-      label: Text(
-        name,
-        style: theme.textTheme.bodySmall,
-      ),
+      label: Text(name, style: theme.textTheme.bodySmall),
       padding: EdgeInsets.zero,
       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
       visualDensity: VisualDensity.compact,
@@ -322,10 +315,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
           color: theme.colorScheme.outline.withValues(alpha: 0.2),
         ),
       ),
-      child: Text(
-        name,
-        style: theme.textTheme.bodySmall,
-      ),
+      child: Text(name, style: theme.textTheme.bodySmall),
     );
   }
 
@@ -374,10 +364,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
               ],
             ),
             const SizedBox(height: 8),
-            Text(
-              review.review,
-              style: theme.textTheme.bodyMedium,
-            ),
+            Text(review.review, style: theme.textTheme.bodyMedium),
           ],
         ),
       ),
@@ -410,8 +397,8 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                   Text(
                     message,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
                     textAlign: TextAlign.center,
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis,
@@ -543,10 +530,10 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
     if (!_formKey.currentState!.validate()) return;
 
     final success = await context.read<RestaurantDetailProvider>().addReview(
-          restaurantId: restaurantId,
-          name: _nameController.text.trim(),
-          review: _reviewController.text.trim(),
-        );
+      restaurantId: restaurantId,
+      name: _nameController.text.trim(),
+      review: _reviewController.text.trim(),
+    );
 
     if (success && mounted) {
       _nameController.clear();

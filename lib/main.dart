@@ -18,18 +18,10 @@ class NyamNyamApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(
-          create: (_) => RestaurantListProvider(),
-        ),
-        ChangeNotifierProvider(
-          create: (_) => RestaurantDetailProvider(),
-        ),
-        ChangeNotifierProvider(
-          create: (_) => RestaurantSearchProvider(),
-        ),
-        ChangeNotifierProvider(
-          create: (_) => ThemeProvider(),
-        ),
+        ChangeNotifierProvider(create: (_) => RestaurantListProvider()),
+        ChangeNotifierProvider(create: (_) => RestaurantDetailProvider()),
+        ChangeNotifierProvider(create: (_) => RestaurantSearchProvider()),
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, _) {

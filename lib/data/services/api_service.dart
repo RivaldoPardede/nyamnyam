@@ -5,7 +5,7 @@ import '../models/restaurant.dart';
 /// API Service for Dicoding Restaurant API
 class ApiService {
   static const String _baseUrl = 'https://restaurant-api.dicoding.dev';
-  
+
   final http.Client _client;
 
   ApiService({http.Client? client}) : _client = client ?? http.Client();
@@ -16,7 +16,7 @@ class ApiService {
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body) as Map<String, dynamic>;
-      
+
       if (data['error'] == true) {
         throw Exception(data['message'] ?? 'Failed to load restaurants');
       }
@@ -37,15 +37,18 @@ class ApiService {
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body) as Map<String, dynamic>;
-      
+
       if (data['error'] == true) {
         throw Exception(data['message'] ?? 'Failed to load restaurant detail');
       }
 
       return RestaurantDetail.fromJson(
-          data['restaurant'] as Map<String, dynamic>);
+        data['restaurant'] as Map<String, dynamic>,
+      );
     } else {
-      throw Exception('Failed to load restaurant detail: ${response.statusCode}');
+      throw Exception(
+        'Failed to load restaurant detail: ${response.statusCode}',
+      );
     }
   }
 
@@ -57,7 +60,7 @@ class ApiService {
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body) as Map<String, dynamic>;
-      
+
       if (data['error'] == true) {
         throw Exception(data['message'] ?? 'Failed to search restaurants');
       }
@@ -81,11 +84,7 @@ class ApiService {
     final response = await _client.post(
       Uri.parse('$_baseUrl/review'),
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'id': restaurantId,
-        'name': name,
-        'review': review,
-      }),
+      body: jsonEncode({'id': restaurantId, 'name': name, 'review': review}),
     );
 
     if (response.statusCode == 200 || response.statusCode == 201) {

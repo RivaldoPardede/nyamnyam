@@ -77,9 +77,7 @@ class _RestaurantListPageState extends State<RestaurantListPage> {
   }
 
   Widget _buildInitialState() {
-    return const Center(
-      child: Text('Press refresh to load restaurants'),
-    );
+    return const Center(child: Text('Press refresh to load restaurants'));
   }
 
   Widget _buildLoadingState() {
@@ -117,7 +115,8 @@ class _RestaurantListPageState extends State<RestaurantListPage> {
     }
 
     return RefreshIndicator(
-      onRefresh: () => context.read<RestaurantListProvider>().fetchRestaurants(),
+      onRefresh: () =>
+          context.read<RestaurantListProvider>().fetchRestaurants(),
       child: ListView.builder(
         padding: const EdgeInsets.symmetric(vertical: 8),
         itemCount: restaurants.length,
@@ -164,8 +163,8 @@ class _RestaurantListPageState extends State<RestaurantListPage> {
             Text(
               message,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
               textAlign: TextAlign.center,
               maxLines: 3,
               overflow: TextOverflow.ellipsis,

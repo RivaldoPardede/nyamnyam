@@ -110,10 +110,7 @@ class Menus {
   final List<MenuItem> foods;
   final List<MenuItem> drinks;
 
-  const Menus({
-    required this.foods,
-    required this.drinks,
-  });
+  const Menus({required this.foods, required this.drinks});
 
   factory Menus.fromJson(Map<String, dynamic> json) {
     return Menus(
