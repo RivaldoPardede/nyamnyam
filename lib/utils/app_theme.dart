@@ -34,7 +34,7 @@ class AppTheme {
         centerTitle: false,
         scrolledUnderElevation: 0,
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: AppColors.surface,
         elevation: 0, // Flat design with border or shadow
         shape: RoundedRectangleBorder(
@@ -80,7 +80,7 @@ class AppTheme {
         color: AppColors.textPrimary,
       ),
       dividerTheme: DividerThemeData(
-        color: Colors.grey.withOpacity(0.1),
+        color: Colors.grey.withValues(alpha: 0.1),
         thickness: 1,
       ),
     );
@@ -119,7 +119,7 @@ class AppTheme {
         centerTitle: false,
         scrolledUnderElevation: 0,
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: AppColors.darkSurface,
         elevation: 0,
         shape: RoundedRectangleBorder(

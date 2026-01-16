@@ -194,7 +194,7 @@ class _RestaurantListPageState extends State<RestaurantListPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
-                Icons.restaurant_off,
+                Icons.no_food_outlined,
                 size: 64,
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
