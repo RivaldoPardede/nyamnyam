@@ -93,7 +93,7 @@ class SettingsPage extends StatelessWidget {
                     subtitle: const Text('Lunch alert at 11:00 AM'),
                     value: reminderProvider.isEnabled,
                     onChanged: (value) => reminderProvider.setReminder(value),
-                    activeColor: AppColors.primary,
+                    activeTrackColor: AppColors.primary,
                   );
                 },
               ),

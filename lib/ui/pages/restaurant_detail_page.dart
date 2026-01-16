@@ -208,7 +208,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: restaurant.customerReviews.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 12),
+                  separatorBuilder: (_, _) => const SizedBox(height: 12),
                   itemBuilder: (context, index) => _buildReviewTile(
                     theme,
                     restaurant.customerReviews[index],
@@ -246,7 +246,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
               child: Image.network(
                 restaurant.largePictureUrl,
                 fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => Container(color: Colors.grey),
+                errorBuilder: (_, _, _) => Container(color: Colors.grey),
               ),
             ),
             // Gradient Overlay for text readability (scrim)
@@ -273,7 +273,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
 
   Widget _buildFloatingFavoriteButton() {
     return Consumer<RestaurantDetailProvider>(
-      builder: (context, provider, _) {
+      builder: (consumerContext, provider, _) {
         final data = provider.state is ResultStateSuccess<RestaurantDetail>
             ? (provider.state as ResultStateSuccess<RestaurantDetail>).data
             : null;
@@ -300,7 +300,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                     .toggleFavorite(restaurant);
 
                 if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
+                  ScaffoldMessenger.of(this.context).showSnackBar(
                     SnackBar(
                       content: Text(
                         newStatus
