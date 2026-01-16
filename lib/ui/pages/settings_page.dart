@@ -28,7 +28,10 @@ class SettingsPage extends StatelessWidget {
                     children: [
                       ListTile(
                         leading: _buildIcon(
-                            Icons.palette_rounded, Colors.purple, theme),
+                          Icons.palette_rounded,
+                          Colors.purple,
+                          theme,
+                        ),
                         title: const Text('Theme Mode'),
                         subtitle: Text(
                           _getThemeName(themeProvider.themeMode),
@@ -82,7 +85,10 @@ class SettingsPage extends StatelessWidget {
                 builder: (context, reminderProvider, _) {
                   return SwitchListTile(
                     secondary: _buildIcon(
-                        Icons.notifications_active_rounded, Colors.orange, theme),
+                      Icons.notifications_active_rounded,
+                      Colors.orange,
+                      theme,
+                    ),
                     title: const Text('Daily Reminder'),
                     subtitle: const Text('Lunch alert at 11:00 AM'),
                     value: reminderProvider.isEnabled,
@@ -104,8 +110,10 @@ class SettingsPage extends StatelessWidget {
                 leading: _buildIcon(Icons.info_rounded, Colors.blue, theme),
                 title: const Text('App Version'),
                 trailing: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: theme.colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(8),
@@ -145,8 +153,10 @@ class SettingsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildSettingsContainer(ThemeData theme,
-      {required List<Widget> children}) {
+  Widget _buildSettingsContainer(
+    ThemeData theme, {
+    required List<Widget> children,
+  }) {
     return Container(
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,

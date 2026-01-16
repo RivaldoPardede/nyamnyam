@@ -34,8 +34,8 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
     Future.microtask(() {
       if (!mounted) return;
       context.read<RestaurantDetailProvider>().fetchRestaurantDetail(
-            widget.restaurantId,
-          );
+        widget.restaurantId,
+      );
     });
   }
 
@@ -117,17 +117,23 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                     children: [
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 8),
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
                         decoration: BoxDecoration(
                           color: AppColors.star.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                              color: AppColors.star.withValues(alpha: 0.5)),
+                            color: AppColors.star.withValues(alpha: 0.5),
+                          ),
                         ),
                         child: Row(
                           children: [
-                            const Icon(Icons.star_rounded,
-                                size: 20, color: AppColors.star),
+                            const Icon(
+                              Icons.star_rounded,
+                              size: 20,
+                              color: AppColors.star,
+                            ),
                             const SizedBox(width: 4),
                             Text(
                               restaurant.rating.toString(),
@@ -140,16 +146,18 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                         ),
                       ),
                       const SizedBox(width: 12),
-                      ...restaurant.categories.map((c) => Padding(
-                            padding: const EdgeInsets.only(right: 8),
-                            child: Chip(
-                              label: Text(c.name),
-                              backgroundColor: theme.colorScheme.surface,
-                              side: BorderSide(color: theme.dividerColor),
-                              visualDensity: VisualDensity.compact,
-                              labelStyle: theme.textTheme.bodySmall,
-                            ),
-                          )),
+                      ...restaurant.categories.map(
+                        (c) => Padding(
+                          padding: const EdgeInsets.only(right: 8),
+                          child: Chip(
+                            label: Text(c.name),
+                            backgroundColor: theme.colorScheme.surface,
+                            side: BorderSide(color: theme.dividerColor),
+                            visualDensity: VisualDensity.compact,
+                            labelStyle: theme.textTheme.bodySmall,
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -176,13 +184,19 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                 _buildSectionTitle(theme, 'Foods', Icons.restaurant_menu),
                 const SizedBox(height: 12),
                 _buildHorizontalMenu(
-                    theme, restaurant.menus.foods, Icons.lunch_dining),
+                  theme,
+                  restaurant.menus.foods,
+                  Icons.lunch_dining,
+                ),
                 const SizedBox(height: 24),
 
                 _buildSectionTitle(theme, 'Drinks', Icons.local_bar),
                 const SizedBox(height: 12),
                 _buildHorizontalMenu(
-                    theme, restaurant.menus.drinks, Icons.local_drink),
+                  theme,
+                  restaurant.menus.drinks,
+                  Icons.local_drink,
+                ),
                 const SizedBox(height: 32),
 
                 // Reviews
@@ -195,8 +209,10 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: restaurant.customerReviews.length,
                   separatorBuilder: (_, __) => const SizedBox(height: 12),
-                  itemBuilder: (context, index) =>
-                      _buildReviewTile(theme, restaurant.customerReviews[index]),
+                  itemBuilder: (context, index) => _buildReviewTile(
+                    theme,
+                    restaurant.customerReviews[index],
+                  ),
                 ),
                 const SizedBox(height: 80), // Fab space
               ],
@@ -258,10 +274,9 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
   Widget _buildFloatingFavoriteButton() {
     return Consumer<RestaurantDetailProvider>(
       builder: (context, provider, _) {
-        final data =
-            provider.state is ResultStateSuccess<RestaurantDetail>
-                ? (provider.state as ResultStateSuccess<RestaurantDetail>).data
-                : null;
+        final data = provider.state is ResultStateSuccess<RestaurantDetail>
+            ? (provider.state as ResultStateSuccess<RestaurantDetail>).data
+            : null;
 
         if (data == null) return const SizedBox.shrink();
 
@@ -283,12 +298,14 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                 final newStatus = await context
                     .read<FavoriteProvider>()
                     .toggleFavorite(restaurant);
-                
+
                 if (mounted) {
-                   ScaffoldMessenger.of(context).showSnackBar(
+                  ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text(
-                        newStatus ? 'Added to favorites' : 'Removed from favorites',
+                        newStatus
+                            ? 'Added to favorites'
+                            : 'Removed from favorites',
                       ),
                       behavior: SnackBarBehavior.floating,
                     ),
@@ -340,16 +357,24 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
             width: 100,
             margin: const EdgeInsets.only(right: 12),
             decoration: BoxDecoration(
-              color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+              color: theme.colorScheme.surfaceContainerHighest.withValues(
+                alpha: 0.3,
+              ),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: theme.dividerColor.withValues(alpha: 0.5)),
+              border: Border.all(
+                color: theme.dividerColor.withValues(alpha: 0.5),
+              ),
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(placeholderIcon,
-                    size: 28,
-                    color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5)),
+                Icon(
+                  placeholderIcon,
+                  size: 28,
+                  color: theme.colorScheme.onSurfaceVariant.withValues(
+                    alpha: 0.5,
+                  ),
+                ),
                 const SizedBox(height: 8),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 4),
@@ -429,7 +454,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
     return Consumer<RestaurantDetailProvider>(
       builder: (context, provider, _) {
         final isSubmitting = provider.isSubmittingReview;
-        
+
         return Column(
           children: [
             TextField(
@@ -457,18 +482,22 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                 onPressed: isSubmitting
                     ? null
                     : () {
-                         if (_nameController.text.isNotEmpty && _reviewController.text.isNotEmpty) {
-                           context.read<RestaurantDetailProvider>().addReview(
-                             restaurantId: widget.restaurantId,
-                             name: _nameController.text,
-                             review: _reviewController.text,
-                           ).then((success) {
-                             if (success && mounted) {
-                               _nameController.clear();
-                               _reviewController.clear();
-                             }
-                           });
-                         }
+                        if (_nameController.text.isNotEmpty &&
+                            _reviewController.text.isNotEmpty) {
+                          context
+                              .read<RestaurantDetailProvider>()
+                              .addReview(
+                                restaurantId: widget.restaurantId,
+                                name: _nameController.text,
+                                review: _reviewController.text,
+                              )
+                              .then((success) {
+                                if (success && mounted) {
+                                  _nameController.clear();
+                                  _reviewController.clear();
+                                }
+                              });
+                        }
                       },
                 child: isSubmitting
                     ? const SizedBox(

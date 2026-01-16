@@ -30,10 +30,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
     // Using CustomScrollView to handle potential connection with sliver app bars in future
     // though here just a simple list is fine, but for consistency we use simple Scaffold body
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Favorites'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text('Favorites'), centerTitle: true),
       body: Consumer<FavoriteProvider>(
         builder: (context, provider, _) {
           if (provider.isLoading) {
@@ -62,7 +59,9 @@ class _FavoritesPageState extends State<FavoritesPage> {
           Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+              color: theme.colorScheme.surfaceContainerHighest.withValues(
+                alpha: 0.3,
+              ),
               shape: BoxShape.circle,
             ),
             child: Icon(
@@ -99,9 +98,16 @@ class _FavoritesPageState extends State<FavoritesPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.error_outline_rounded, size: 64, color: Colors.grey),
+            const Icon(
+              Icons.error_outline_rounded,
+              size: 64,
+              color: Colors.grey,
+            ),
             const SizedBox(height: 16),
-            Text('Failed to load favorites', style: theme.textTheme.titleMedium),
+            Text(
+              'Failed to load favorites',
+              style: theme.textTheme.titleMedium,
+            ),
             const SizedBox(height: 8),
             Text(message, textAlign: TextAlign.center),
             const SizedBox(height: 24),
@@ -140,9 +146,12 @@ class _FavoritesPageState extends State<FavoritesPage> {
                 scaffoldMessenger.showSnackBar(
                   SnackBar(
                     content: Text('${restaurant.name} removed from favorites'),
-                    behavior: SnackBarBehavior.floating, // Modern floating snackbar
+                    behavior:
+                        SnackBarBehavior.floating, // Modern floating snackbar
                     duration: const Duration(seconds: 2),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                 );
               }

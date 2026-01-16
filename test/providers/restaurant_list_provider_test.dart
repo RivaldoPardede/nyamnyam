@@ -9,28 +9,27 @@ class MockApiService extends ApiService {
   final bool shouldFail;
   final List<Restaurant> mockRestaurants;
 
-  MockApiService({
-    this.shouldFail = false,
-    List<Restaurant>? restaurants,
-  }) : mockRestaurants = restaurants ??
-            [
-              Restaurant(
-                id: '1',
-                name: 'Test Restaurant 1',
-                description: 'Description 1',
-                pictureId: 'pic1',
-                city: 'City 1',
-                rating: 4.5,
-              ),
-              Restaurant(
-                id: '2',
-                name: 'Test Restaurant 2',
-                description: 'Description 2',
-                pictureId: 'pic2',
-                city: 'City 2',
-                rating: 4.0,
-              ),
-            ];
+  MockApiService({this.shouldFail = false, List<Restaurant>? restaurants})
+    : mockRestaurants =
+          restaurants ??
+          [
+            Restaurant(
+              id: '1',
+              name: 'Test Restaurant 1',
+              description: 'Description 1',
+              pictureId: 'pic1',
+              city: 'City 1',
+              rating: 4.5,
+            ),
+            Restaurant(
+              id: '2',
+              name: 'Test Restaurant 2',
+              description: 'Description 2',
+              pictureId: 'pic2',
+              city: 'City 2',
+              rating: 4.0,
+            ),
+          ];
 
   @override
   Future<List<Restaurant>> getRestaurantList() async {
@@ -49,9 +48,7 @@ void main() {
   group('RestaurantListProvider', () {
     // Test 1: Initial state should be ResultStateNone
     test('should have initial state as ResultStateNone', () {
-      final provider = RestaurantListProvider(
-        apiService: MockApiService(),
-      );
+      final provider = RestaurantListProvider(apiService: MockApiService());
 
       expect(provider.state, isA<ResultStateNone>());
     });
@@ -66,7 +63,8 @@ void main() {
 
       // Verify state is Success with data
       expect(provider.state, isA<ResultStateSuccess<List<Restaurant>>>());
-      final successState = provider.state as ResultStateSuccess<List<Restaurant>>;
+      final successState =
+          provider.state as ResultStateSuccess<List<Restaurant>>;
       expect(successState.data.length, 2);
       expect(successState.data[0].name, 'Test Restaurant 1');
       expect(successState.data[1].name, 'Test Restaurant 2');
@@ -117,7 +115,8 @@ void main() {
       await provider.fetchRestaurants();
 
       expect(provider.state, isA<ResultStateSuccess<List<Restaurant>>>());
-      final successState = provider.state as ResultStateSuccess<List<Restaurant>>;
+      final successState =
+          provider.state as ResultStateSuccess<List<Restaurant>>;
       expect(successState.data.isEmpty, true);
     });
   });

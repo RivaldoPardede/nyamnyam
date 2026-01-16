@@ -12,10 +12,10 @@ import 'utils/app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Initialize Workmanager for background tasks
   await BackgroundService.initialize();
-  
+
   runApp(const NyamNyamApp());
 }
 

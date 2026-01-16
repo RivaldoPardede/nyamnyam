@@ -95,13 +95,29 @@ class _RestaurantListPageState extends State<RestaurantListPage> {
                       child: Row(
                         children: [
                           _buildCategoryChip(
-                              theme, 'All', Icons.fastfood, true),
+                            theme,
+                            'All',
+                            Icons.fastfood,
+                            true,
+                          ),
                           _buildCategoryChip(
-                              theme, 'Nearby', Icons.location_on, false),
+                            theme,
+                            'Nearby',
+                            Icons.location_on,
+                            false,
+                          ),
                           _buildCategoryChip(
-                              theme, 'Top Rated', Icons.star, false),
+                            theme,
+                            'Top Rated',
+                            Icons.star,
+                            false,
+                          ),
                           _buildCategoryChip(
-                              theme, 'New', Icons.new_releases, false),
+                            theme,
+                            'New',
+                            Icons.new_releases,
+                            false,
+                          ),
                         ],
                       ),
                     ),
@@ -145,8 +161,7 @@ class _RestaurantListPageState extends State<RestaurantListPage> {
     return Container(
       margin: const EdgeInsets.only(right: 12),
       child: Material(
-        color:
-            isSelected ? AppColors.primary : theme.colorScheme.surface,
+        color: isSelected ? AppColors.primary : theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(24),
         elevation: isSelected ? 4 : 0,
         shadowColor: AppColors.primary.withValues(alpha: 0.3),
@@ -157,11 +172,7 @@ class _RestaurantListPageState extends State<RestaurantListPage> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(24),
-              border: isSelected
-                  ? null
-                  : Border.all(
-                      color: theme.dividerColor,
-                    ),
+              border: isSelected ? null : Border.all(color: theme.dividerColor),
             ),
             child: Row(
               children: [
@@ -207,18 +218,15 @@ class _RestaurantListPageState extends State<RestaurantListPage> {
     }
 
     return SliverList(
-      delegate: SliverChildBuilderDelegate(
-        (context, index) {
-          final restaurant = restaurants[index];
-          return RestaurantCard(
-            restaurant: restaurant,
-            onTap: () => context.push(
-              '/detail/${restaurant.id}?name=${Uri.encodeComponent(restaurant.name)}',
-            ),
-          );
-        },
-        childCount: restaurants.length,
-      ),
+      delegate: SliverChildBuilderDelegate((context, index) {
+        final restaurant = restaurants[index];
+        return RestaurantCard(
+          restaurant: restaurant,
+          onTap: () => context.push(
+            '/detail/${restaurant.id}?name=${Uri.encodeComponent(restaurant.name)}',
+          ),
+        );
+      }, childCount: restaurants.length),
     );
   }
 

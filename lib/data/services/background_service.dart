@@ -87,17 +87,9 @@ Future<void> _showNotification({
     presentSound: true,
   );
 
-  const details = NotificationDetails(
-    android: androidDetails,
-    iOS: iosDetails,
-  );
+  const details = NotificationDetails(android: androidDetails, iOS: iosDetails);
 
-  await plugin.show(
-    0,
-    title,
-    body,
-    details,
-  );
+  await plugin.show(0, title, body, details);
 }
 
 /// Helper class for background service initialization
@@ -106,10 +98,7 @@ class BackgroundService {
 
   /// Initialize Workmanager
   static Future<void> initialize() async {
-    await Workmanager().initialize(
-      callbackDispatcher,
-      isInDebugMode: false,
-    );
+    await Workmanager().initialize(callbackDispatcher, isInDebugMode: false);
   }
 
   /// Register daily reminder task
@@ -117,7 +106,7 @@ class BackgroundService {
     // Calculate initial delay to 11:00 AM
     final now = DateTime.now();
     var scheduledTime = DateTime(now.year, now.month, now.day, 11, 0);
-    
+
     if (scheduledTime.isBefore(now)) {
       scheduledTime = scheduledTime.add(const Duration(days: 1));
     }
@@ -129,9 +118,7 @@ class BackgroundService {
       taskName,
       initialDelay: initialDelay,
       frequency: const Duration(hours: 24),
-      constraints: Constraints(
-        networkType: NetworkType.connected,
-      ),
+      constraints: Constraints(networkType: NetworkType.connected),
     );
   }
 

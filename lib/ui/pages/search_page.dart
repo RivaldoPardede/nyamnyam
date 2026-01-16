@@ -48,9 +48,7 @@ class _SearchPageState extends State<SearchPage> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Search'),
-      ),
+      appBar: AppBar(title: const Text('Search')),
       body: Column(
         children: [
           // Modern Search Bar
@@ -85,12 +83,14 @@ class _SearchPageState extends State<SearchPage> {
                 return switch (provider.state) {
                   ResultStateNone() => _buildInitialState(theme),
                   ResultStateLoading() => const Center(
-                      child: CircularProgressIndicator(),
-                    ),
+                    child: CircularProgressIndicator(),
+                  ),
                   ResultStateSuccess<List<Restaurant>>(:final data) =>
                     _buildSuccessState(theme, data),
-                  ResultStateError(:final message) =>
-                    _buildErrorState(theme, message),
+                  ResultStateError(:final message) => _buildErrorState(
+                    theme,
+                    message,
+                  ),
                 };
               },
             ),
@@ -109,7 +109,9 @@ class _SearchPageState extends State<SearchPage> {
             Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+                color: theme.colorScheme.surfaceContainerHighest.withValues(
+                  alpha: 0.3,
+                ),
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -151,10 +153,7 @@ class _SearchPageState extends State<SearchPage> {
               color: theme.colorScheme.onSurfaceVariant,
             ),
             const SizedBox(height: 16),
-            Text(
-              'No matches found',
-              style: theme.textTheme.titleMedium,
-            ),
+            Text('No matches found', style: theme.textTheme.titleMedium),
           ],
         ),
       );

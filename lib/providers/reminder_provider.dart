@@ -77,7 +77,7 @@ class ReminderProvider extends ChangeNotifier {
   Future<void> _cancelReminder() async {
     // Cancel Workmanager task
     await BackgroundService.cancelDailyReminder();
-    
+
     // Also cancel any pending notifications
     await _notificationService.cancelDailyReminder();
   }

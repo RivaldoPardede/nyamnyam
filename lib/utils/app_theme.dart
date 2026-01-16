@@ -70,15 +70,15 @@ class AppTheme {
           borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
         ),
         prefixIconColor: AppColors.textSecondary,
-        hintStyle: TextStyle(color: AppColors.textSecondary.withValues(alpha: 0.6)),
+        hintStyle: TextStyle(
+          color: AppColors.textSecondary.withValues(alpha: 0.6),
+        ),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 16,
           vertical: 16,
         ),
       ),
-      iconTheme: const IconThemeData(
-        color: AppColors.textPrimary,
-      ),
+      iconTheme: const IconThemeData(color: AppColors.textPrimary),
       dividerTheme: DividerThemeData(
         color: Colors.grey.withValues(alpha: 0.1),
         thickness: 1,
@@ -122,9 +122,7 @@ class AppTheme {
       cardTheme: CardThemeData(
         color: AppColors.darkSurface,
         elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
@@ -151,18 +149,21 @@ class AppTheme {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.darkPrimary, width: 1.5),
+          borderSide: const BorderSide(
+            color: AppColors.darkPrimary,
+            width: 1.5,
+          ),
         ),
         prefixIconColor: AppColors.darkTextSecondary,
-        hintStyle: TextStyle(color: AppColors.darkTextSecondary.withValues(alpha: 0.6)),
+        hintStyle: TextStyle(
+          color: AppColors.darkTextSecondary.withValues(alpha: 0.6),
+        ),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 16,
           vertical: 16,
         ),
       ),
-      iconTheme: const IconThemeData(
-        color: AppColors.darkTextPrimary,
-      ),
+      iconTheme: const IconThemeData(color: AppColors.darkTextPrimary),
       dividerTheme: DividerThemeData(
         color: Colors.white.withValues(alpha: 0.1),
         thickness: 1,
