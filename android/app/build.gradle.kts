@@ -11,6 +11,7 @@ android {
     ndkVersion = "29.0.13113456"
 
     compileOptions {
+        isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
@@ -19,7 +20,7 @@ android {
         jvmTarget = JavaVersion.VERSION_17.toString()
     }
 
-    defaultConfig {
+    defaultConfig { multiDexEnabled = true
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "dev.nyamnyam.nyamnyam"
         // You can update the following values to match your application needs.
