@@ -5,8 +5,14 @@ import '../../data/models/restaurant.dart';
 class RestaurantCard extends StatelessWidget {
   final Restaurant restaurant;
   final VoidCallback? onTap;
+  final Widget? trailing;
 
-  const RestaurantCard({super.key, required this.restaurant, this.onTap});
+  const RestaurantCard({
+    super.key,
+    required this.restaurant,
+    this.onTap,
+    this.trailing,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -145,13 +151,15 @@ class RestaurantCard extends StatelessWidget {
               ),
             ),
 
-            // Arrow indicator
+            // Trailing widget or arrow indicator
             Padding(
               padding: const EdgeInsets.only(right: 8, top: 48),
-              child: Icon(
-                Icons.chevron_right,
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
+              child:
+                  trailing ??
+                  Icon(
+                    Icons.chevron_right,
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
             ),
           ],
         ),

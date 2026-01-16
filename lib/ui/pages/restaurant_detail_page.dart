@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../data/models/customer_review.dart';
 import '../../data/models/menu_item.dart';
+import '../../data/models/restaurant.dart';
 import '../../data/models/restaurant_detail.dart';
+import '../../providers/favorite_provider.dart';
 import '../../providers/restaurant_detail_provider.dart';
 import '../../utils/result_state.dart';
 
@@ -209,6 +211,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
       expandedHeight: 250,
       pinned: true,
       stretch: true,
+      actions: restaurant != null ? [_buildFavoriteButton(restaurant)] : null,
       flexibleSpace: FlexibleSpaceBar(
         title: Text(
           restaurant?.name ?? widget.restaurantName,
@@ -236,6 +239,49 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
               )
             : Container(color: Theme.of(context).colorScheme.primary),
       ),
+    );
+  }
+
+  Widget _buildFavoriteButton(RestaurantDetail restaurant) {
+    return FutureBuilder<bool>(
+      future: context.read<FavoriteProvider>().isFavorite(restaurant.id),
+      builder: (context, snapshot) {
+        final isFavorite = snapshot.data ?? false;
+        return IconButton(
+          icon: Icon(
+            isFavorite ? Icons.favorite : Icons.favorite_border,
+            color: isFavorite ? Colors.red : Colors.white,
+          ),
+          onPressed: () async {
+            final scaffoldMessenger = ScaffoldMessenger.of(context);
+            final simpleRestaurant = Restaurant(
+              id: restaurant.id,
+              name: restaurant.name,
+              description: restaurant.description,
+              pictureId: restaurant.pictureId,
+              city: restaurant.city,
+              rating: restaurant.rating,
+            );
+            final newStatus = await context
+                .read<FavoriteProvider>()
+                .toggleFavorite(simpleRestaurant);
+            if (mounted) {
+              scaffoldMessenger.showSnackBar(
+                SnackBar(
+                  content: Text(
+                    newStatus
+                        ? '${restaurant.name} added to favorites'
+                        : '${restaurant.name} removed from favorites',
+                  ),
+                  duration: const Duration(seconds: 2),
+                ),
+              );
+              // Force rebuild to update icon
+              (context as Element).markNeedsBuild();
+            }
+          },
+        );
+      },
     );
   }
 
