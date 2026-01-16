@@ -5,7 +5,6 @@ import 'package:http/http.dart' as http;
 import 'package:workmanager/workmanager.dart';
 
 /// Background Service for Workmanager tasks
-/// NOTE: This must be a TOP-LEVEL function for Workmanager to work.
 @pragma('vm:entry-point')
 void callbackDispatcher() {
   Workmanager().executeTask((task, inputData) async {
@@ -98,7 +97,7 @@ class BackgroundService {
 
   /// Initialize Workmanager
   static Future<void> initialize() async {
-    await Workmanager().initialize(callbackDispatcher, isInDebugMode: false);
+    await Workmanager().initialize(callbackDispatcher);
   }
 
   /// Register daily reminder task

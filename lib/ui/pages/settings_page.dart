@@ -4,7 +4,6 @@ import '../../providers/reminder_provider.dart';
 import '../../providers/theme_provider.dart';
 import '../../utils/app_colors.dart';
 
-/// Modern Settings Page with Grouped sections
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
 
@@ -130,7 +129,7 @@ class SettingsPage extends StatelessWidget {
               ListTile(
                 leading: _buildIcon(Icons.code_rounded, Colors.grey, theme),
                 title: const Text('Developed by'),
-                subtitle: const Text('New Model AI Assistant'),
+                subtitle: const Text('Rivaldo - Dicoding'),
                 onTap: () {},
               ),
             ],

@@ -6,7 +6,6 @@ import '../../providers/restaurant_search_provider.dart';
 import '../../utils/result_state.dart';
 import '../widgets/restaurant_card.dart';
 
-/// Modern Search Page
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
 
@@ -69,7 +68,7 @@ class _SearchPageState extends State<SearchPage> {
               ),
               textInputAction: TextInputAction.search,
               onChanged: (value) {
-                setState(() {}); // Rebuild to show/hide clear icon
+                setState(() {});
                 _onSearch(value);
               },
               onSubmitted: _onSearch,

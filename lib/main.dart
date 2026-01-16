@@ -13,7 +13,6 @@ import 'utils/app_theme.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Workmanager for background tasks
   await BackgroundService.initialize();
 
   runApp(const NyamNyamApp());
@@ -46,7 +45,7 @@ class NyamNyamApp extends StatelessWidget {
         ),
       ],
       child: Consumer<ThemeProvider>(
-        builder: (context, themeProvider, _) {
+        builder: (_, themeProvider, _) {
           return MaterialApp.router(
             title: 'NyamNyam',
             debugShowCheckedModeBanner: false,

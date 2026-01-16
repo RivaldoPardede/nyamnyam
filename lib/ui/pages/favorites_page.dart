@@ -5,7 +5,6 @@ import '../../data/models/restaurant.dart';
 import '../../providers/favorite_provider.dart';
 import '../widgets/restaurant_card.dart';
 
-/// Modern Favorites Page
 class FavoritesPage extends StatefulWidget {
   const FavoritesPage({super.key});
 
@@ -27,8 +26,6 @@ class _FavoritesPageState extends State<FavoritesPage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    // Using CustomScrollView to handle potential connection with sliver app bars in future
-    // though here just a simple list is fine, but for consistency we use simple Scaffold body
     return Scaffold(
       appBar: AppBar(title: const Text('Favorites'), centerTitle: true),
       body: Consumer<FavoriteProvider>(

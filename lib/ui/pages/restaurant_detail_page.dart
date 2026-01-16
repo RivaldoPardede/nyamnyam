@@ -9,7 +9,6 @@ import '../../providers/restaurant_detail_provider.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/result_state.dart';
 
-/// Modern Restaurant Detail Page
 class RestaurantDetailPage extends StatefulWidget {
   final String restaurantId;
   final String restaurantName;

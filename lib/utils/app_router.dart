@@ -7,7 +7,6 @@ import '../ui/pages/search_page.dart';
 import '../ui/pages/settings_page.dart';
 import '../ui/widgets/scaffold_with_navbar.dart';
 
-/// App router configuration using go_router with StatefulShellRoute
 class AppRouter {
   static final _rootNavigatorKey = GlobalKey<NavigatorState>();
   static final _shellNavigatorHomeKey = GlobalKey<NavigatorState>(

@@ -7,7 +7,6 @@ import '../../utils/app_colors.dart';
 import '../../utils/result_state.dart';
 import '../widgets/restaurant_card.dart';
 
-/// Modern Home Page displaying list of restaurants
 class RestaurantListPage extends StatefulWidget {
   const RestaurantListPage({super.key});
 
@@ -29,7 +28,6 @@ class _RestaurantListPageState extends State<RestaurantListPage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    // Using CustomScrollView for premium feel with SliverAppBar
     return Scaffold(
       body: RefreshIndicator(
         onRefresh: () =>
@@ -37,7 +35,6 @@ class _RestaurantListPageState extends State<RestaurantListPage> {
         color: AppColors.primary,
         child: CustomScrollView(
           slivers: [
-            // Modern Sliver App Bar
             SliverAppBar(
               floating: true,
               pinned: true,
@@ -94,35 +91,34 @@ class _RestaurantListPageState extends State<RestaurantListPage> {
                       scrollDirection: Axis.horizontal,
                       child: Row(
                         children: [
-                          _buildCategoryChip(
-                            theme,
-                            'All',
-                            Icons.fastfood,
-                            true,
-                          ),
-                          _buildCategoryChip(
-                            theme,
-                            'Nearby',
-                            Icons.location_on,
-                            false,
-                          ),
-                          _buildCategoryChip(
-                            theme,
-                            'Top Rated',
-                            Icons.star,
-                            false,
-                          ),
-                          _buildCategoryChip(
-                            theme,
-                            'New',
-                            Icons.new_releases,
-                            false,
-                          ),
+                          _buildCategoryChip('All', Icons.fastfood, true),
+                          _buildCategoryChip('Nearby', Icons.location_on, false),
+                          _buildCategoryChip('Top Rated', Icons.star, false),
+                          _buildCategoryChip('New', Icons.new_releases, false),
                         ],
                       ),
                     ),
                   ],
                 ),
+              ),
+            ),
+
+            // Restaurant List
+            Consumer<RestaurantListProvider>(
+              builder: (context, provider, _) {
+                return switch (provider.state) {
+                  ResultStateNone() => const SliverFillRemaining(
+                    child: Center(child: Text('Press refresh')),
+                  ),
+                  ResultStateLoading() => const SliverFillRemaining(
+                    child: Center(child: CircularProgressIndicator()),
+                  ),
+                  ResultStateSuccess<List<Restaurant>>(:final data) =>
+                    _buildSliverList(data),
+                  ResultStateError(:final message) => SliverFillRemaining(
+                    child: _buildErrorState(message),
+                  ),
+                };
               ),
             ),
 
