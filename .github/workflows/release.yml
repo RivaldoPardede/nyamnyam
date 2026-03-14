@@ -26,26 +26,32 @@ jobs:
           java-version: "17"
           distribution: temurin
 
-      # ── 3. Flutter stable ──────────────────────────────────────────────────
+      # ── 3. Android SDK: accept licences & install required NDK ─────────────
+      - name: Accept Android SDK licences & install NDK
+        run: |
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
+          $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "ndk;29.0.13113456"
+
+      # ── 4. Flutter stable ──────────────────────────────────────────────────
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: stable
           cache: true
 
-      # ── 4. Dependencies ────────────────────────────────────────────────────
+      # ── 5. Dependencies ────────────────────────────────────────────────────
       - name: Install dependencies
         run: flutter pub get
 
-      # ── 5. Quality gate: static analysis ───────────────────────────────────
+      # ── 6. Quality gate: static analysis ───────────────────────────────────
       - name: Analyze
         run: flutter analyze
 
-      # ── 6. Quality gate: unit & widget tests ───────────────────────────────
+      # ── 7. Quality gate: unit & widget tests ───────────────────────────────
       - name: Run tests
         run: flutter test
 
-      # ── 7. Extract version from pubspec.yaml ───────────────────────────────
+      # ── 8. Extract version from pubspec.yaml ───────────────────────────────
       - name: Extract version
         id: version
         run: |
@@ -53,17 +59,17 @@ jobs:
           echo "value=$VERSION" >> "$GITHUB_OUTPUT"
           echo "Extracted version: $VERSION"
 
-      # ── 8. Build ───────────────────────────────────────────────────────────
+      # ── 9. Build ───────────────────────────────────────────────────────────
       - name: Build release APK
         run: flutter build apk --release
 
-      # ── 9. Rename APK to include version for clarity ───────────────────────
+      # ── 10. Rename APK to include version for clarity ──────────────────────
       - name: Rename APK artifact
         run: |
           mv build/app/outputs/flutter-apk/app-release.apk \
              build/app/outputs/flutter-apk/nyamnyam-v${{ steps.version.outputs.value }}.apk
 
-      # ── 10. Publish GitHub Release ─────────────────────────────────────────
+      # ── 11. Publish GitHub Release ─────────────────────────────────────────
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
