@@ -30,39 +30,36 @@ class RestaurantCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Image Section (Full Width)
+            // Image Section (Full Width) - No Hero to avoid tag conflicts
             Stack(
               children: [
-                Hero(
-                  tag: 'restaurant-image-${restaurant.id}',
-                  child: AspectRatio(
-                    aspectRatio: 16 / 9,
-                    child: Image.network(
-                      restaurant.pictureUrl, // Medium size
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => Container(
-                        color: theme.colorScheme.surfaceContainerHighest,
-                        child: Icon(
-                          Icons.restaurant,
-                          size: 48,
-                          color: theme.colorScheme.onSurfaceVariant,
-                        ),
+                AspectRatio(
+                  aspectRatio: 16 / 9,
+                  child: Image.network(
+                    restaurant.pictureUrl,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => Container(
+                      color: theme.colorScheme.surfaceContainerHighest,
+                      child: Icon(
+                        Icons.restaurant,
+                        size: 48,
+                        color: theme.colorScheme.onSurfaceVariant,
                       ),
-                      loadingBuilder: (context, child, loadingProgress) {
-                        if (loadingProgress == null) return child;
-                        return Container(
-                          color: theme.colorScheme.surfaceContainerHighest,
-                          child: Center(
-                            child: CircularProgressIndicator(
-                              value: loadingProgress.expectedTotalBytes != null
-                                  ? loadingProgress.cumulativeBytesLoaded /
-                                        loadingProgress.expectedTotalBytes!
-                                  : null,
-                            ),
-                          ),
-                        );
-                      },
                     ),
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return Container(
+                        color: theme.colorScheme.surfaceContainerHighest,
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            value: loadingProgress.expectedTotalBytes != null
+                                ? loadingProgress.cumulativeBytesLoaded /
+                                      loadingProgress.expectedTotalBytes!
+                                : null,
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 ),
                 // Rating Pill (Overlaid)
@@ -108,7 +105,6 @@ class RestaurantCard extends StatelessWidget {
               ],
             ),
 
-            // Content Section
             Padding(
               padding: const EdgeInsets.all(16),
               child: Row(
@@ -118,20 +114,14 @@ class RestaurantCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         // Name
-                        Hero(
-                          tag: 'restaurant-name-${restaurant.id}',
-                          child: Material(
-                            color: Colors.transparent,
-                            child: Text(
-                              restaurant.name,
-                              style: theme.textTheme.titleLarge?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                height: 1.2,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
+                        Text(
+                          restaurant.name,
+                          style: theme.textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            height: 1.2,
                           ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                         const SizedBox(height: 8),
                         // City

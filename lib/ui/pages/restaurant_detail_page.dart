@@ -241,14 +241,10 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
         background: Stack(
           fit: StackFit.expand,
           children: [
-            Hero(
-              tag: 'restaurant-image-${restaurant.id}',
-              child: Image.network(
-                restaurant.largePictureUrl,
-                fit: BoxFit.cover,
-                errorBuilder: (_, error, stack) =>
-                    Container(color: Colors.grey),
-              ),
+            Image.network(
+              restaurant.largePictureUrl,
+              fit: BoxFit.cover,
+              errorBuilder: (_, error, stack) => Container(color: Colors.grey),
             ),
             // Gradient Overlay for text readability (scrim)
             const DecoratedBox(
@@ -284,7 +280,9 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
         // Check favorite status using Consumer to watch favorites list
         return Consumer<FavoriteProvider>(
           builder: (_, favoriteProvider, child) {
-            final isFavorite = favoriteProvider.favorites.any((r) => r.id == data.id);
+            final isFavorite = favoriteProvider.favorites.any(
+              (r) => r.id == data.id,
+            );
             return FloatingActionButton.extended(
               onPressed: () async {
                 final restaurant = Restaurant(
@@ -514,6 +512,72 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
   }
 
   Widget _buildErrorState(String message) {
-    return Center(child: Text(message));
+    final theme = Theme.of(context);
+
+    String userMessage;
+    if (message.toLowerCase().contains('socket') ||
+        message.toLowerCase().contains('connection') ||
+        message.toLowerCase().contains('network') ||
+        message.toLowerCase().contains('failed host lookup')) {
+      userMessage =
+          'No internet connection.\nPlease check your network and try again.';
+    } else if (message.toLowerCase().contains('timeout')) {
+      userMessage = 'Connection timed out.\nPlease try again later.';
+    } else {
+      userMessage = 'Something went wrong.\nPlease try again.';
+    }
+
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.errorContainer.withValues(alpha: 0.3),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.wifi_off_rounded,
+                size: 64,
+                color: theme.colorScheme.error,
+              ),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              'Oops!',
+              style: theme.textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              userMessage,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 32),
+            FilledButton.icon(
+              onPressed: () {
+                context.read<RestaurantDetailProvider>().fetchRestaurantDetail(
+                  widget.restaurantId,
+                );
+              },
+              icon: const Icon(Icons.refresh_rounded),
+              label: const Text('Try Again'),
+            ),
+            const SizedBox(height: 16),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Go Back'),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
